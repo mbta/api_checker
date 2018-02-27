@@ -1,0 +1,104 @@
+{
+	"Frequency": 120,
+	"calls": [{
+		"NameOfAPI": "mbta-bus-locations-1",
+		"Url": "http://realtime.mbta.com/developer/api/v2/vehiclesbyroutes?api_key=9yaXQLoRF02t3UfWjxyiDQ&format=json&routes=1",
+		"DaysToCall": ["MON",
+		"SUN",
+		"TUE",
+		"WED",
+		"THU",
+		"FRI",
+		"SAT"],
+		"ListOfTimeRange": ["05:59-23:59"],
+		"DataAgeLimit": 300,
+		"Active": true
+	},
+	{
+		"NameOfAPI": "mbta-subway-locations-blue-orange",
+		"Url": "http://realtime.mbta.com/developer/api/v2/vehiclesbyroutes?api_key=9yaXQLoRF02t3UfWjxyiDQ&format=json&routes=blue,orange",
+		"DaysToCall": ["MON",
+		"SUN",
+		"TUE",
+		"WED",
+		"THU",
+		"FRI",
+		"SAT"],
+		"ListOfTimeRange": ["05:59-23:59"],
+		"DataAgeLimit": 300,
+		"Active": true
+	},
+	{
+		"NameOfAPI": "mbta-light-rail-locations-green",
+		"Url": "http://realtime.mbta.com/developer/api/v2/vehiclesbyroutes?api_key=9yaXQLoRF02t3UfWjxyiDQ&format=json&routes=Green-B,Green-C,Green-D,Green-E",
+		"DaysToCall": ["MON",
+		"SUN",
+		"TUE",
+		"WED",
+		"THU",
+		"FRI",
+		"SAT"],
+		"ListOfTimeRange": ["05:59-23:59"],
+		"DataAgeLimit": 300,
+		"Active": true
+	},
+	{
+		"NameOfAPI": "mbta-light-rail-locations-mattapan-weekday",
+		"Url": "http://realtime.mbta.com/developer/api/v2/vehiclesbyroutes?api_key=9yaXQLoRF02t3UfWjxyiDQ&format=json&routes=Mattapan",
+		"DaysToCall": [
+		"MON",
+		"TUE",
+		"WED",
+		"THU",
+		"FRI"],
+		"ListOfTimeRange": ["05:59-23:59"],
+		"DataAgeLimit": 480,
+		"Active": true
+	},
+	{
+		"NameOfAPI": "mbta-light-rail-locations-mattapan-weekend",
+		"Url": "http://realtime.mbta.com/developer/api/v2/vehiclesbyroutes?api_key=9yaXQLoRF02t3UfWjxyiDQ&format=json&routes=Mattapan",
+		"DaysToCall": [
+		"SAT",
+		"SUN"],
+		"ListOfTimeRange": ["05:59-23:59"],
+		"DataAgeLimit": 1500,
+		"Active": true
+	},
+	{
+		"NameOfAPI": "mbta-cr-locations-providence-lowell-worcester-fitchburg-weekday",
+		"Url": "http://realtime.mbta.com/developer/api/v2/vehiclesbyroutes?api_key=9yaXQLoRF02t3UfWjxyiDQ&format=json&routes=CR-Providence,CR-Lowell,CR-Worcester,CR-Fitchburg",
+		"DaysToCall": ["MON",
+		"TUE",
+		"WED",
+		"THU",
+		"FRI"],
+		"ListOfTimeRange": ["06:15-22:59"],
+		"DataAgeLimit": 600,
+		"Active": true
+	},
+	{
+		"NameOfAPI": "mbta-cr-locations-providence-lowell-worcester-fitchburg-weekend",
+		"Url": "http://realtime.mbta.com/developer/api/v2/vehiclesbyroutes?api_key=9yaXQLoRF02t3UfWjxyiDQ&format=json&routes=CR-Providence,CR-Lowell,CR-Worcester,CR-Fitchburg",
+		"DaysToCall": ["SAT",
+		"SUN"],
+		"ListOfTimeRange": ["07:05-22:59"],
+		"DataAgeLimit": 600,
+		"Active": true
+	},
+	{
+		"NameOfAPI": "mbta-alerts",
+		"Url": "http://realtime.mbta.com/developer/api/v2/alerts?api_key=9yaXQLoRF02t3UfWjxyiDQ&format=json",
+		"DaysToCall": ["MON",
+		"SUN",
+		"TUE",
+		"WED",
+		"THU",
+		"FRI",
+		"SAT"],
+		"ListOfTimeRange": ["08:01-21:30"],
+		"DataAgeLimit": 64800,
+		"Active": true
+	},
+	]
+}
