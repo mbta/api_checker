@@ -3,7 +3,7 @@ defmodule ApiChecker.PeriodicTask.Validator do
   Validates a PeriodicTask struct's values.
   """
   alias ApiChecker.PeriodicTask
-  alias ApiChecker.PeriodicTask.{TimeRange}
+  alias ApiChecker.PeriodicTask.{TimeRange, Days}
 
   @doc """
   Validates a PeriodicTask struct's values.
@@ -50,7 +50,6 @@ defmodule ApiChecker.PeriodicTask.Validator do
     false
   end
 
-
   @doc """
   Returns false for items that are blank (`""` and `nil`) and returns true
   for anything else.
@@ -65,7 +64,6 @@ defmodule ApiChecker.PeriodicTask.Validator do
   true
   """
   def is_not_blank?(item), do: !is_blank?(item)
-
 
   @doc """
   Returns true for items that are blank (`""` and `nil`) and returns false
@@ -84,7 +82,6 @@ defmodule ApiChecker.PeriodicTask.Validator do
   def is_blank?(nil), do: true
   def is_blank?(_), do: false
 
-
   @doc """
   A simple validation for url binaries.
 
@@ -97,10 +94,8 @@ defmodule ApiChecker.PeriodicTask.Validator do
   iex> Validator.is_valid_url?("ftp://somthing.org:4444")
   false
 
-
   iex> Validator.is_valid_url?("http://")
   false
-
   """
   def is_valid_url?(url) when is_binary(url) do
     url
@@ -114,16 +109,6 @@ defmodule ApiChecker.PeriodicTask.Validator do
     false
   end
 
-  @days_of_the_week [
-    "SUN",
-    "MON",
-    "TUE",
-    "WED",
-    "THU",
-    "FRI",
-    "SAT",
-  ]
-
   @doc """
   Returns true for capitalized three-lettered abbreviations for days of the week.
   Returns false for anything else.
@@ -136,15 +121,10 @@ defmodule ApiChecker.PeriodicTask.Validator do
 
   iex> Validator.is_day_of_week?("DAY")
   false
-
   """
-  def is_day_of_week?(day) when day in @days_of_the_week do
-    true
+  def is_day_of_week?(day) do
+    day in Days.names()
   end
-  def is_day_of_week?(_) do
-    false
-  end
-
 
   @doc """
   Returns true for a list of capitalized three-lettered abbreviations for days of the week.
@@ -165,7 +145,6 @@ defmodule ApiChecker.PeriodicTask.Validator do
 
   iex> Validator.is_list_of_days_of_week?("FRI")
   false
-
   """
   def is_list_of_days_of_week?([]) do
     false
@@ -176,7 +155,6 @@ defmodule ApiChecker.PeriodicTask.Validator do
   def is_list_of_days_of_week?(_) do
     false
   end
-
 
   @doc """
   Returns true for a non-empty list of valid TimeRange structs.
@@ -233,6 +211,4 @@ defmodule ApiChecker.PeriodicTask.Validator do
   defp reason_formatter(field, description) do
     "'#{field}' #{description}"
   end
-
-
 end

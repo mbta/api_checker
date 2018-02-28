@@ -1,4 +1,10 @@
 defmodule ApiChecker.PeriodicTask.TimeRange do
+  @moduledoc """
+  Parses and validates time ranges for use in periodic tasks.
+
+  A valid time range in string format is "HH:MM-HH:MM" where
+  the time left of the dash is before the time on the right.
+  """
   alias ApiChecker.PeriodicTask.TimeRange
 
   defstruct [
@@ -83,7 +89,6 @@ defmodule ApiChecker.PeriodicTask.TimeRange do
         {:error, :invalid_time_format}
     end
   end
-
 
   @doc """
   Ensures that a possible time string has seconds.

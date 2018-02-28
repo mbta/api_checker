@@ -3,7 +3,6 @@ defmodule ApiChecker.PeriodicTask do
   Provides context, parsing, validating for configuration of
   a PeriodicTask with the intention of configuring a worker process.
   """
-
   alias ApiChecker.PeriodicTask
 
   defstruct [
