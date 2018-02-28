@@ -6,11 +6,12 @@ defmodule ApiChecker.PeriodicTask do
   alias ApiChecker.PeriodicTask
 
   defstruct frequency_in_seconds: nil,
+            time_ranges: [],
+            # vehicles_with_filter
             name: nil,
             url: nil,
-            time_ranges: [],
-            data_age_limit: nil,
-            active: nil
+            active: nil,
+            validators: []
 
   def from_json(_json) do
     %PeriodicTask{}

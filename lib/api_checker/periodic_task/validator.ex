@@ -3,7 +3,7 @@ defmodule ApiChecker.PeriodicTask.Validator do
   Validates a PeriodicTask struct's values.
   """
   alias ApiChecker.PeriodicTask
-  alias ApiChecker.PeriodicTask.{WeeklyTimeRange, Days}
+  alias ApiChecker.PeriodicTask.{WeeklyTimeRange}
 
   @doc """
   Validates a PeriodicTask struct's values.
@@ -16,7 +16,6 @@ defmodule ApiChecker.PeriodicTask.Validator do
          :ok <- run_validation(task, :name, &is_not_blank?/1, "cannot be blank"),
          :ok <- run_validation(task, :url, &is_valid_url?/1, "must be a valid url"),
          :ok <- run_validation(task, :time_ranges, &is_list_of_time_ranges?/1, "must be a list of valid time ranges"),
-         :ok <- run_validation(task, :data_age_limit, &is_pos_integer?/1, "must be a positive integer"),
          :ok <- run_validation(task, :active, &is_boolean/1, "must be a boolean") do
       :ok
     else
