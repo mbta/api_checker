@@ -5,7 +5,7 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRange do
   A valid time range in string format is "HH:MM-HH:MM" where
   the time left of the dash is before the time on the right.
   """
-  alias ApiChecker.PeriodicTask.{WeeklyTimeRange}
+  alias ApiChecker.PeriodicTask.{WeeklyTimeRange, Days}
 
   defstruct start: nil,
             stop: nil,
@@ -52,10 +52,11 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRange do
   {:error, :start_must_be_before_stop}
 
   iex> WeeklyTimeRange.validate(%WeeklyTimeRange{start: nil, stop: ~T[06:30:00], day: "FRI"})
-  {:error, :invalid_time_range}
+  {:error, :invalid_weekly_time_range}
   """
-  def validate(%WeeklyTimeRange{start: %Time{} = start, stop: %Time{} = stop}) do
-    with :ok <- validate_start_is_before_stop(start, stop) do
+  def validate(%WeeklyTimeRange{} = time_range) do
+    with :ok <- validate_start_is_before_stop(time_range),
+          :ok <- validate_day_of_week(time_range) do
       :ok
     else
       {:error, _} = err ->
@@ -132,19 +133,38 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRange do
   @doc """
   Ensures that a start time is before a stop time.
 
-  iex> WeeklyTimeRange.validate_start_is_before_stop(~T[06:30:00], ~T[06:50:00])
+  iex> WeeklyTimeRange.validate_start_is_before_stop(%WeeklyTimeRange{start: ~T[06:30:00], stop: ~T[06:50:00]})
   :ok
 
-  iex> WeeklyTimeRange.validate_start_is_before_stop(~T[06:50:00], ~T[06:30:00])
+  iex> WeeklyTimeRange.validate_start_is_before_stop(nil)
+  {:error, :invalid_weekly_time_range}
+
+  iex> WeeklyTimeRange.validate_start_is_before_stop(%WeeklyTimeRange{start: ~T[06:50:00], stop: ~T[06:30:00]})
   {:error, :start_must_be_before_stop}
+
   """
-  def validate_start_is_before_stop(start, stop) do
+  def validate_start_is_before_stop(%WeeklyTimeRange{start: %Time{} = start, stop: %Time{} = stop}) do
+    do_validate_start_is_before_stop(start, stop)
+  end
+  def validate_start_is_before_stop(_) do
+    {:error, :invalid_weekly_time_range}
+  end
+
+  defp do_validate_start_is_before_stop(start, stop) do
     case Time.compare(start, stop) do
       :lt ->
         :ok
 
       _ ->
         {:error, :start_must_be_before_stop}
+    end
+  end
+
+  def validate_day_of_week(%WeeklyTimeRange{day: day}) do
+    if Days.is_day_of_week?(day) do
+      :ok
+    else
+      {:error, :invalid_day_of_week}
     end
   end
 end
