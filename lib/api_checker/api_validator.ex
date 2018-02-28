@@ -24,7 +24,7 @@ defmodule ApiChecker.ApiValidator do
   alias ApiChecker.ApiValidator
   alias ApiChecker.ApiValidator.{Vehicle, Jsonapi, Array}
 
-  defstruct keypath: nil,
+  defstruct keypath: [],
             # params: nil, # keep this here for the future -JLG
             validator: nil
 
@@ -34,6 +34,35 @@ defmodule ApiChecker.ApiValidator do
     "not_empty" => &Array.validate_not_empty/1,
     ["array", "not_empty"] => &Array.validate_not_empty/1
   }
+
+  @doc """
+  Validates the fields of an ApiValidator struct
+  """
+  def validate_struct(%ApiValidator{keypath: keypath, validator: validator}) do
+    with true <- is_list(keypath),
+         true <- validator_exists?(validator) do
+      :ok
+    else
+      {:error, _} = err ->
+        err
+
+      _ ->
+        {:error, :invalid_api_validator_config}
+    end
+  end
+
+  @doc """
+  Returns true if a validator of that name exists, else false.
+
+  iex> ApiValidator.validator_exists?("not_empty")
+  true
+  """
+  def validator_exists?(name) when is_list(name) when is_binary(name) do
+    case get_validator_func(name) do
+      {:ok, _} -> true
+      _ -> false
+    end
+  end
 
   @doc """
   Get a validator by name given a string or a list/array validator by name

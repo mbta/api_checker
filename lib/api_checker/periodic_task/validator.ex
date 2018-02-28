@@ -3,6 +3,7 @@ defmodule ApiChecker.PeriodicTask.Validator do
   Validates a PeriodicTask struct's values.
   """
   alias ApiChecker.PeriodicTask
+  alias ApiChecker.ApiValidator
   alias ApiChecker.PeriodicTask.{WeeklyTimeRange}
 
   @doc """
@@ -16,7 +17,9 @@ defmodule ApiChecker.PeriodicTask.Validator do
          :ok <- run_validation(task, :name, &is_not_blank?/1, "cannot be blank"),
          :ok <- run_validation(task, :url, &is_valid_url?/1, "must be a valid url"),
          :ok <- run_validation(task, :time_ranges, &is_list_of_time_ranges?/1, "must be a list of valid time ranges"),
-         :ok <- run_validation(task, :active, &is_boolean/1, "must be a boolean") do
+         :ok <- run_validation(task, :active, &is_boolean/1, "must be a boolean"),
+         :ok <-
+           run_validation(task, :validators, &is_list_of_api_validators?/1, "must be a list of valid api validators") do
       :ok
     else
       {:error, _} = err ->
@@ -132,6 +135,40 @@ defmodule ApiChecker.PeriodicTask.Validator do
   end
 
   def is_list_of_time_ranges?(_) do
+    false
+  end
+
+  @doc """
+  Returns true for a non-empty list of valid TimeRange structs.
+
+  Returns false for anything else.
+
+  iex> Validator.is_list_of_api_validators?([])
+  false
+
+  iex> Validator.is_list_of_api_validators?([%ApiValidator{validator: "not_empty"}])
+  true
+
+  iex> Validator.is_list_of_api_validators?([%ApiValidator{validator: "not_a_real_validator"}])
+  false
+  """
+  def is_list_of_api_validators?([]) do
+    false
+  end
+
+  def is_list_of_api_validators?(list) when is_list(list) do
+    Enum.all?(list, &is_api_validator?/1)
+  end
+
+  def is_list_of_api_validators?(_) do
+    false
+  end
+
+  def is_api_validator?(%ApiValidator{} = api_validator) do
+    ApiValidator.validate_struct(api_validator) == :ok
+  end
+
+  def is_api_validator?(_) do
     false
   end
 
