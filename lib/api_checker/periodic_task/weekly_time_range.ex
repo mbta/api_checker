@@ -56,7 +56,7 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRange do
   """
   def validate(%WeeklyTimeRange{} = time_range) do
     with :ok <- validate_start_is_before_stop(time_range),
-          :ok <- validate_day_of_week(time_range) do
+         :ok <- validate_day_of_week(time_range) do
       :ok
     else
       {:error, _} = err ->
@@ -146,6 +146,7 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRange do
   def validate_start_is_before_stop(%WeeklyTimeRange{start: %Time{} = start, stop: %Time{} = stop}) do
     do_validate_start_is_before_stop(start, stop)
   end
+
   def validate_start_is_before_stop(_) do
     {:error, :invalid_weekly_time_range}
   end
