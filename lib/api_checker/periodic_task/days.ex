@@ -21,4 +21,21 @@ defmodule ApiChecker.PeriodicTask.Days do
     index = day - 1
     Enum.at(@names, index)
   end
+
+  @doc """
+  Returns true for capitalized three-lettered abbreviations for days of the week.
+  Returns false for anything else.
+
+  iex> Validator.is_day_of_week?("FRI")
+  true
+
+  iex> Validator.is_day_of_week?("fri")
+  false
+
+  iex> Validator.is_day_of_week?("DAY")
+  false
+  """
+  def is_day_of_week?(day) do
+    day in @names
+  end
 end

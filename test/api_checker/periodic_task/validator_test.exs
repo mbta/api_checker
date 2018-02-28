@@ -1,20 +1,20 @@
 defmodule ApiChecker.PeriodicTask.ValidatorTest do
   use ExUnit.Case, async: true
   alias ApiChecker.PeriodicTask
-  alias ApiChecker.PeriodicTask.{Validator, TimeRange}
+  alias ApiChecker.PeriodicTask.{Validator, WeeklyTimeRange}
   doctest ApiChecker.PeriodicTask.Validator
 
-  @valid_time_range %TimeRange{
+  @valid_time_range %WeeklyTimeRange{
     start: ~T[06:30:00],
-    stop: ~T[07:40:00]
+    stop: ~T[07:40:00],
+    day: "WED"
   }
 
   @valid_struct %PeriodicTask{
     frequency_in_seconds: 120,
     name: "valid-periodic-task-validator-test",
     url: "http://google.com",
-    days_to_call: ["WED"],
-    list_of_time_range: [@valid_time_range],
+    time_ranges: [@valid_time_range],
     data_age_limit: 300,
     active: true
   }
@@ -38,13 +38,9 @@ defmodule ApiChecker.PeriodicTask.ValidatorTest do
         url: "http://",
         url: "foo",
         url: "//google.com/foo",
-        days_to_call: [],
-        days_to_call: ["wed"],
-        days_to_call: ["WED", "foo"],
-        days_to_call: nil,
-        list_of_time_range: [],
-        list_of_time_range: ["foo"],
-        list_of_time_range: [@valid_time_range, "foo"]
+        time_ranges: [],
+        time_ranges: ["foo"],
+        time_ranges: [@valid_time_range, "foo"]
       ]
 
       for {key, invalid_value} <- invalid_values do

@@ -1,29 +1,32 @@
-defmodule ApiChecker.PeriodicTask.TimeRange do
+defmodule ApiChecker.PeriodicTask.WeeklyTimeRange do
   @moduledoc """
   Parses and validates time ranges for use in periodic tasks.
 
   A valid time range in string format is "HH:MM-HH:MM" where
   the time left of the dash is before the time on the right.
   """
-  alias ApiChecker.PeriodicTask.TimeRange
+  alias ApiChecker.PeriodicTask.{WeeklyTimeRange}
 
   defstruct start: nil,
-            stop: nil
+            stop: nil,
+            day: nil
 
   @doc """
-  Parses a valid time range string into a valid TimeRange struct.
+  Parses a valid time range string into a valid WeeklyTimeRange struct.
 
-  iex> TimeRange.parse_string("06:15-22:59")
-  {:ok, %TimeRange{start: ~T[06:15:00], stop: ~T[22:59:00]}}
+  iex> WeeklyTimeRange.from_json(%{"start" => "06:15", "stop" => "22:59", "day" => "WED"})
+  {:ok, %WeeklyTimeRange{start: ~T[06:15:00], stop: ~T[22:59:00], day: "WED"}}
 
-  iex> TimeRange.parse_string("22:59-06:15")
-  {:error, :start_must_be_before_stop}
+  iex> WeeklyTimeRange.from_json("22:59-06:15")
+  {:error, :invalid_weekly_time_range_json}
   """
-  def parse_string(item) when is_binary(item) do
-    with [raw_start, raw_stop] <- String.split(item, "-"),
+  def from_json(json) when is_map(json) do
+    with {:ok, raw_start} <- Map.fetch(json, "start"),
+         {:ok, raw_stop} <- Map.fetch(json, "stop"),
+         {:ok, day} <- Map.fetch(json, "day"),
          {:ok, start} <- parse_time(raw_start),
          {:ok, stop} <- parse_time(raw_stop),
-         time_range <- %TimeRange{start: start, stop: stop},
+         time_range <- %WeeklyTimeRange{start: start, stop: stop, day: day},
          :ok <- validate(time_range) do
       {:ok, time_range}
     else
@@ -31,25 +34,28 @@ defmodule ApiChecker.PeriodicTask.TimeRange do
         err
 
       _ ->
-        # did not split in the correct shape
-        {:error, :invalid_time_range_string}
+        {:error, :invalid_weekly_time_range_json}
     end
   end
 
-  @doc """
-  Validates TimeRange structs.
+  def from_json(_) do
+    {:error, :invalid_weekly_time_range_json}
+  end
 
-  iex> TimeRange.validate(%TimeRange{start: ~T[06:30:00], stop: ~T[06:50:00]})
+  @doc """
+  Validates WeeklyTimeRange structs.
+
+  iex> WeeklyTimeRange.validate(%WeeklyTimeRange{start: ~T[06:30:00], stop: ~T[06:50:00], day: "MON"})
   :ok
 
-  iex> TimeRange.validate(%TimeRange{start: ~T[06:50:00], stop: ~T[06:30:00]})
+  iex> WeeklyTimeRange.validate(%WeeklyTimeRange{start: ~T[06:50:00], stop: ~T[06:30:00], day: "SUN"})
   {:error, :start_must_be_before_stop}
 
-  iex> TimeRange.validate(%TimeRange{start: nil, stop: ~T[06:30:00]})
+  iex> WeeklyTimeRange.validate(%WeeklyTimeRange{start: nil, stop: ~T[06:30:00], day: "FRI"})
   {:error, :invalid_time_range}
   """
-  def validate(%TimeRange{start: %Time{} = start, stop: %Time{} = stop}) do
-    with :ok <- ensure_start_is_before_stop(start, stop) do
+  def validate(%WeeklyTimeRange{start: %Time{} = start, stop: %Time{} = stop}) do
+    with :ok <- validate_start_is_before_stop(start, stop) do
       :ok
     else
       {:error, _} = err ->
@@ -64,13 +70,13 @@ defmodule ApiChecker.PeriodicTask.TimeRange do
   @doc """
   Turns valid time strings into {:ok %Time{}} or {:error, reason}
 
-  iex> TimeRange.parse_time("06:30")
+  iex> WeeklyTimeRange.parse_time("06:30")
   {:ok, ~T[06:30:00]}
 
-  iex> TimeRange.parse_time("06:30:30")
+  iex> WeeklyTimeRange.parse_time("06:30:30")
   {:ok, ~T[06:30:30]}
 
-  iex> TimeRange.parse_time("6:30")
+  iex> WeeklyTimeRange.parse_time("6:30")
   {:error, :invalid_time_format}
   """
   def parse_time(time) when is_binary(time) do
@@ -98,16 +104,16 @@ defmodule ApiChecker.PeriodicTask.TimeRange do
   function is used to convert possible time strings to Time structs.
   See the help for `parse_time/1` for valid time examples.
 
-  iex> TimeRange.ensure_time_has_seconds("12:13:14")
+  iex> WeeklyTimeRange.ensure_time_has_seconds("12:13:14")
   {:ok, "12:13:14"}
 
-  iex> TimeRange.ensure_time_has_seconds("12:13")
+  iex> WeeklyTimeRange.ensure_time_has_seconds("12:13")
   {:ok, "12:13:00"}
 
-  iex> TimeRange.ensure_time_has_seconds("2:13")
+  iex> WeeklyTimeRange.ensure_time_has_seconds("2:13")
   {:ok, "2:13:00"}
 
-  iex> TimeRange.ensure_time_has_seconds("12")
+  iex> WeeklyTimeRange.ensure_time_has_seconds("12")
   {:error, :invalid_time_format}
   """
   def ensure_time_has_seconds(time) when is_binary(time) do
@@ -126,13 +132,13 @@ defmodule ApiChecker.PeriodicTask.TimeRange do
   @doc """
   Ensures that a start time is before a stop time.
 
-  iex> TimeRange.ensure_start_is_before_stop(~T[06:30:00], ~T[06:50:00])
+  iex> WeeklyTimeRange.validate_start_is_before_stop(~T[06:30:00], ~T[06:50:00])
   :ok
 
-  iex> TimeRange.ensure_start_is_before_stop(~T[06:50:00], ~T[06:30:00])
+  iex> WeeklyTimeRange.validate_start_is_before_stop(~T[06:50:00], ~T[06:30:00])
   {:error, :start_must_be_before_stop}
   """
-  def ensure_start_is_before_stop(start, stop) do
+  def validate_start_is_before_stop(start, stop) do
     case Time.compare(start, stop) do
       :lt ->
         :ok
