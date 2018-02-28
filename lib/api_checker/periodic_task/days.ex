@@ -1,5 +1,4 @@
 defmodule ApiChecker.PeriodicTask.Days do
-  
   # The order matters.
   # Monday comes first.
   # Sunday comes last.
@@ -10,13 +9,13 @@ defmodule ApiChecker.PeriodicTask.Days do
     "THU",
     "FRI",
     "SAT",
-    "SUN",
+    "SUN"
   ]
 
   def names do
     @names
   end
-  
+
   def today_is do
     day = Date.day_of_week(Date.utc_today())
     index = day - 1

@@ -6,7 +6,7 @@ defmodule ApiChecker.PeriodicTask.ValidatorTest do
 
   @valid_time_range %TimeRange{
     start: ~T[06:30:00],
-    stop: ~T[07:40:00],
+    stop: ~T[07:40:00]
   }
 
   @valid_struct %PeriodicTask{
@@ -16,13 +16,14 @@ defmodule ApiChecker.PeriodicTask.ValidatorTest do
     days_to_call: ["WED"],
     list_of_time_range: [@valid_time_range],
     data_age_limit: 300,
-    active: true,
+    active: true
   }
 
   describe "validate/1" do
     test "ok for valid PeriodicTasks" do
       assert :ok == Validator.validate(@valid_struct)
     end
+
     test "error for non-PeriodicTask" do
       assert {:error, :not_a_periodic_task} == Validator.validate(nil)
     end
@@ -43,14 +44,12 @@ defmodule ApiChecker.PeriodicTask.ValidatorTest do
         days_to_call: nil,
         list_of_time_range: [],
         list_of_time_range: ["foo"],
-        list_of_time_range: [@valid_time_range, "foo"],
-        
+        list_of_time_range: [@valid_time_range, "foo"]
       ]
+
       for {key, invalid_value} <- invalid_values do
-        assert {:error, _reason} = @valid_struct |> Map.put(key, invalid_value) |> Validator.validate
+        assert {:error, _reason} = @valid_struct |> Map.put(key, invalid_value) |> Validator.validate()
       end
-  
     end
   end
-
 end
