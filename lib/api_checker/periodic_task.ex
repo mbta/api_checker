@@ -3,14 +3,14 @@ defmodule ApiChecker.PeriodicTask do
   Provides context, parsing, validating for configuration of
   a PeriodicTask with the intention of configuring a worker process.
   """
-  alias ApiChecker.{PeriodicTask, ApiValidator}
+  alias ApiChecker.{PeriodicTask, JsonCheck}
 
   defstruct frequency_in_seconds: nil,
             time_ranges: [],
             name: nil,
             url: nil,
             active: nil,
-            validators: []
+            checks: []
 
   @doc """
   Parses valid perodic task json into a PeriodicTask struct.
@@ -24,7 +24,7 @@ defmodule ApiChecker.PeriodicTask do
 
   defp do_from_json(json) do
     with time_ranges when is_list(time_ranges) <- parse_time_ranges(json["time_ranges"]),
-         validators when is_list(validators) <- parse_validators(json["validators"]) do
+         checks when is_list(checks) <- parse_checks(json["checks"]) do
       {:ok,
        %PeriodicTask{
          frequency_in_seconds: json["frequency_in_seconds"],
@@ -32,7 +32,7 @@ defmodule ApiChecker.PeriodicTask do
          name: json["name"],
          url: json["url"],
          active: true,
-         validators: validators
+         checks: checks
        }}
     else
       {:error, _} = err ->
@@ -44,12 +44,12 @@ defmodule ApiChecker.PeriodicTask do
     PeriodicTask.Validator.validate(task)
   end
 
-  defp parse_validators(json) when is_list(json) do
-    Enum.map(json, &json_to_validator/1)
+  defp parse_checks(json) when is_list(json) do
+    Enum.map(json, &json_config_to_json_check/1)
   end
 
-  defp parse_validators(_) do
-    {:error, :validators_must_be_a_list}
+  defp parse_checks(_) do
+    {:error, :checks_must_be_a_list}
   end
 
   defp parse_time_ranges(json) when is_list(json) do
@@ -74,18 +74,18 @@ defmodule ApiChecker.PeriodicTask do
     {:error, :invalid_time_range}
   end
 
-  def json_to_validator(json) when is_map(json) do
-    case ApiValidator.from_json(json) do
-      {:ok, api_validator} ->
-        api_validator
+  def json_config_to_json_check(json) when is_map(json) do
+    case JsonCheck.from_json(json) do
+      {:ok, json_check} ->
+        json_check
 
       {:error, _} = err ->
         err
     end
   end
 
-  def json_to_validator(_) do
-    {:error, :invalid_validator_config}
+  def json_config_to_json_check(_) do
+    {:error, :invalid_json_check_config}
   end
 
   def get_range_module(%{"type" => type}) do

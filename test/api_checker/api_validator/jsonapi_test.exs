@@ -1,5 +1,5 @@
-defmodule ApiChecker.ApiValidator.JsonapiTest do
+defmodule ApiChecker.JsonCheck.JsonapiTest do
   use ExUnit.Case
-  alias ApiChecker.ApiValidator.Jsonapi
-  doctest ApiChecker.ApiValidator.Jsonapi
+  alias ApiChecker.JsonCheck.Jsonapi
+  doctest ApiChecker.JsonCheck.Jsonapi
 end

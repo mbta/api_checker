@@ -1,6 +1,6 @@
 defmodule ApiChecker.PeriodicTask.ValidatorTest do
   use ExUnit.Case, async: true
-  alias ApiChecker.{PeriodicTask, ApiValidator}
+  alias ApiChecker.{PeriodicTask, JsonCheck}
   alias ApiChecker.PeriodicTask.{Validator, WeeklyTimeRange}
   doctest ApiChecker.PeriodicTask.Validator
 
@@ -10,9 +10,9 @@ defmodule ApiChecker.PeriodicTask.ValidatorTest do
     day: "WED"
   }
 
-  @valid_api_validator %ApiValidator{
+  @valid_json_check %JsonCheck{
     keypath: [],
-    validator: "not_empty"
+    expects: "not_empty"
   }
 
   @valid_struct %PeriodicTask{
@@ -22,7 +22,7 @@ defmodule ApiChecker.PeriodicTask.ValidatorTest do
     time_ranges: [@valid_time_range],
     # data_age_limit: 300,
     active: true,
-    validators: [@valid_api_validator]
+    checks: [@valid_json_check]
   }
 
   describe "validate/1" do

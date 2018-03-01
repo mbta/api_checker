@@ -1,6 +1,6 @@
 defmodule ApiChecker.PeriodicTaskTest do
   use ExUnit.Case
-  alias ApiChecker.{PeriodicTask, ApiValidator}
+  alias ApiChecker.{PeriodicTask, JsonCheck}
   doctest ApiChecker.PeriodicTask
 
   @valid_periodic_task_json %{
@@ -15,18 +15,18 @@ defmodule ApiChecker.PeriodicTaskTest do
       %{"type" => "weekly", "day" => "THU", "start" => "06:30", "stop" => "22:00"},
       %{"type" => "weekly", "day" => "FRI", "start" => "06:30", "stop" => "22:00"}
     ],
-    "validators" => [
-      %{"keypath" => ["data"], "validator" => ["array", "not_empty"]},
-      %{"keypath" => ["jsonapi"], "validator" => "jsonapi"}
+    "checks" => [
+      %{"keypath" => ["data"], "expects" => ["array", "not_empty"]},
+      %{"keypath" => ["jsonapi"], "expects" => "jsonapi"}
     ]
   }
   describe "from_json/1" do
     test "works for valid json" do
       assert {:ok, task} = PeriodicTask.from_json(@valid_periodic_task_json)
 
-      assert task.validators == [
-               %ApiValidator{keypath: ["data"], validator: ["array", "not_empty"]},
-               %ApiValidator{keypath: ["jsonapi"], validator: "jsonapi"}
+      assert task.checks == [
+               %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]},
+               %JsonCheck{keypath: ["jsonapi"], expects: "jsonapi"}
              ]
 
       assert task.time_ranges == [
@@ -44,7 +44,7 @@ defmodule ApiChecker.PeriodicTaskTest do
     end
 
     test "errors for invalid json" do
-      assert {:error, _} = @valid_periodic_task_json |> Map.drop(["validators"]) |> PeriodicTask.from_json()
+      assert {:error, _} = @valid_periodic_task_json |> Map.drop(["checks"]) |> PeriodicTask.from_json()
     end
   end
 end

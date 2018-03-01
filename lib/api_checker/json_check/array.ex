@@ -1,4 +1,4 @@
-defmodule ApiChecker.ApiValidator.Array do
+defmodule ApiChecker.JsonCheck.Array do
   @moduledoc """
   Functions for validating JSON arrays.
   """
@@ -30,20 +30,20 @@ defmodule ApiChecker.ApiValidator.Array do
   end
 
   @doc """
-  Reduces a json array (list) with a validator.
+  Reduces a json array (list) with an expectation function.
   Returns :ok or {:error, reason}.
 
-  See `test/api_validator/array_test.exs` for examples.
+  See `test/api_checker/json_check/array_test.exs` for examples.
   """
-  def validate_items(items, validator_func) when is_function(validator_func, 1) and is_list(items) do
+  def validate_items(items, expectation_func) when is_function(expectation_func, 1) and is_list(items) do
     # to extend description include index for error results
     Enum.reduce(items, :ok, fn
-      item, :ok -> validator_func.(item)
+      item, :ok -> expectation_func.(item)
       _, acc -> acc
     end)
   end
 
-  def validate_items(_not_an_array, validator_func) when is_function(validator_func, 1) do
+  def validate_items(_not_an_array, expectation_func) when is_function(expectation_func, 1) do
     {:error, :invalid_array}
   end
 end

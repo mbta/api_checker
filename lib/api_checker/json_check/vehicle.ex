@@ -1,6 +1,6 @@
-defmodule ApiChecker.ApiValidator.Vehicle do
+defmodule ApiChecker.JsonCheck.Vehicle do
   @moduledoc """
-  The JSON validator for a "vehicle".
+  The JSON check for a "vehicle".
 
   Example JSON:
   {
@@ -47,6 +47,6 @@ defmodule ApiChecker.ApiValidator.Vehicle do
   This function is not implemented.
   """
   def validate(_data) do
-    {:error, :vehicle_validation_is_not_implemented}
+    {:error, :vehicle_json_check_is_not_implemented}
   end
 end
