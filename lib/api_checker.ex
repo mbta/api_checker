@@ -11,5 +11,4 @@ defmodule ApiChecker do
   def get_previous_responses() do
     PreviousResponse.get_all()
   end
-
 end

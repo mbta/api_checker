@@ -4,6 +4,7 @@ defmodule ApiChecker.PeriodicTask do
   a PeriodicTask with the intention of configuring a worker process.
   """
   alias ApiChecker.{PeriodicTask, JsonCheck}
+  alias ApiChecker.PeriodicTask.WeeklyTimeRange
 
   defstruct frequency_in_seconds: nil,
             time_ranges: [],
@@ -98,5 +99,9 @@ defmodule ApiChecker.PeriodicTask do
 
   def get_range_module(_) do
     {:error, :invalid_range_type}
+  end
+
+  def intersects?(%PeriodicTask{time_ranges: ranges}, %DateTime{} = datetime) do
+    Enum.any?(ranges, fn %WeeklyTimeRange{} = timerange -> WeeklyTimeRange.intersects?(timerange, datetime) end)
   end
 end

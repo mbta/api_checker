@@ -1,4 +1,5 @@
 defmodule ApiChecker.PeriodicTask.Days do
+  alias ApiChecker.PeriodicTask.Times
   # The order matters.
   # Monday comes first.
   # Sunday comes last.
@@ -17,7 +18,18 @@ defmodule ApiChecker.PeriodicTask.Days do
   end
 
   def today_is do
-    day = Date.day_of_week(Date.utc_today())
+    name_of_day(Date.utc_today())
+  end
+
+  def name_of_day(%DateTime{} = datetime) do
+    datetime
+    |> Times.to_service_timezone()
+    |> DateTime.to_date()
+    |> name_of_day
+  end
+
+  def name_of_day(%Date{} = date) do
+    day = Date.day_of_week(date)
     index = day - 1
     Enum.at(@names, index)
   end

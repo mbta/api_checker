@@ -25,5 +25,4 @@ defmodule ApiChecker.PreviousResponse do
   def handle_call(:get_all, _from, state) do
     {:reply, state, state}
   end
-
 end

@@ -41,8 +41,9 @@ defmodule ApiChecker.Schedule do
     case PeriodicTask.from_json(json_check_config) do
       {:ok, periodic_task} ->
         periodic_task
+
       {:error, _} = err ->
-        raise "Error in #{inspect @json_checks_config_file_path}': #{inspect err}"
+        raise "Error in #{inspect(@json_checks_config_file_path)}': #{inspect(err)}"
     end
   end
 end

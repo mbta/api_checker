@@ -18,8 +18,7 @@ defmodule ApiChecker.PeriodicTask.Validator do
          :ok <- run_validation(task, :url, &is_valid_url?/1, "must be a valid url"),
          :ok <- run_validation(task, :time_ranges, &is_list_of_time_ranges?/1, "must be a list of valid time ranges"),
          :ok <- run_validation(task, :active, &is_boolean/1, "must be a boolean"),
-         :ok <-
-           run_validation(task, :checks, &is_list_of_json_checks?/1, "must be a list of valid json checks") do
+         :ok <- run_validation(task, :checks, &is_list_of_json_checks?/1, "must be a list of valid json checks") do
       :ok
     else
       {:error, _} = err ->
