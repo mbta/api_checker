@@ -4,7 +4,6 @@ defmodule ApiChecker.PreviousResponse do
   """
 
   use GenServer
-  alias ApiChecker.PeriodicTask
 
   defstruct updated_at: nil,
             body: nil,

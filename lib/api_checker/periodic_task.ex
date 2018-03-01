@@ -3,8 +3,8 @@ defmodule ApiChecker.PeriodicTask do
   Provides context, parsing, validating for configuration of
   a PeriodicTask with the intention of configuring a worker process.
   """
-  alias ApiChecker.{PeriodicTask, JsonCheck}
-  alias ApiChecker.PeriodicTask.WeeklyTimeRange
+  alias ApiChecker.{PeriodicTask, JsonCheck, PreviousResponse}
+  alias ApiChecker.PeriodicTask.{WeeklyTimeRange, Times}
 
   defstruct frequency_in_seconds: nil,
             time_ranges: [],
@@ -101,7 +101,28 @@ defmodule ApiChecker.PeriodicTask do
     {:error, :invalid_range_type}
   end
 
+  @doc """
+  Given a `PeriodicTask` struct and a `DateTime` struct, returns true if the
+  `datetime` falls within any of the periodic task's time ranges. False
+  otherwise.
+  """
   def intersects?(%PeriodicTask{time_ranges: ranges}, %DateTime{} = datetime) do
     Enum.any?(ranges, fn %WeeklyTimeRange{} = timerange -> WeeklyTimeRange.intersects?(timerange, datetime) end)
   end
+
+  @doc """
+  Given a datetime, returns true when the `PreviousResponse` struct's
+  `updated_at` happened less than `frequency_in_seconds` ago. False otherwise.
+  """
+  def too_soon_to_run?(%PeriodicTask{} = periodic_task, %DateTime{} = previous_datetime, %DateTime{} = target_datetime) do
+    previous_datetime = Times.to_service_timezone(previous_datetime)
+    target_datetime = Times.to_service_timezone(target_datetime)
+    # `difference` is a positive number when the target datetime is ahead of the
+    # previous datetime.
+    difference = DateTime.diff(target_datetime, previous_datetime)
+    difference <= periodic_task.frequency_in_seconds
+  end
 end
+
+
+# reject if it's too soon to run

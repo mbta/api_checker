@@ -97,4 +97,29 @@ defmodule ApiChecker.PeriodicTaskTest do
       refute PeriodicTask.intersects?(task, @saturday_12pm)
     end
   end
+
+  @thursday_7am datetime("2018-03-01T07:00:00-0500")
+  @thursday_7_01am datetime("2018-03-01T07:01:00-0500")
+  @thursday_7_05am datetime("2018-03-01T07:05:00-0500")
+
+  describe "too_soon_to_run?/3" do
+    test "true for responses outside of frequency range given datetime" do
+      task = @valid_periodic_task
+      previous_datetime = @thursday_7am
+      target_time = @thursday_7_01am
+      assert PeriodicTask.too_soon_to_run?(task, previous_datetime, target_time)
+    end
+    test "true for target time in the past" do
+      task = @valid_periodic_task
+      previous_datetime = @thursday_7am
+      target_time = @thursday_6am
+      assert PeriodicTask.too_soon_to_run?(task, previous_datetime, target_time)
+    end
+    test "false for responses inside of frequency range given datetime" do
+      task = @valid_periodic_task
+      previous_datetime = @thursday_7am
+      target_time = @thursday_7_05am
+      refute PeriodicTask.too_soon_to_run?(task, previous_datetime, target_time)
+    end
+  end
 end
