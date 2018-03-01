@@ -3,7 +3,7 @@ defmodule ApiChecker.PeriodicTask do
   Provides context, parsing, validating for configuration of
   a PeriodicTask with the intention of configuring a worker process.
   """
-  alias ApiChecker.{PeriodicTask, JsonCheck, PreviousResponse}
+  alias ApiChecker.{PeriodicTask, JsonCheck}
   alias ApiChecker.PeriodicTask.{WeeklyTimeRange, Times}
 
   defstruct frequency_in_seconds: nil,
