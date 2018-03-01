@@ -1,5 +1,5 @@
 defmodule ApiChecker.PeriodicTaskTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   alias ApiChecker.{PeriodicTask, JsonCheck}
   alias ApiChecker.PeriodicTask.{WeeklyTimeRange}
   doctest ApiChecker.PeriodicTask

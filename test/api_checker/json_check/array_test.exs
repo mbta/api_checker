@@ -1,5 +1,5 @@
 defmodule ApiChecker.JsonCheck.ArrayTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   alias ApiChecker.JsonCheck.{Array, Jsonapi}
   doctest ApiChecker.JsonCheck.Array
 
