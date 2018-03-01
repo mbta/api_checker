@@ -10,6 +10,8 @@ defmodule ApiChecker.Application do
     children = [
       # Starts a worker by calling: ApiChecker.Worker.start_link(arg)
       # {ApiChecker.Worker, arg},
+      {ApiChecker.Schedule, nil},
+      {ApiChecker.PreviousResponse, nil},
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
