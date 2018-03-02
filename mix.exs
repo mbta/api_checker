@@ -23,7 +23,8 @@ defmodule ApiChecker.Mixfile do
   defp deps do
     [
       {:jason, "~> 1.0"},
-      {:timex, "~> 3.2"}
+      {:timex, "~> 3.2"},
+      {:httpoison, "~> 1.0"}
     ]
   end
 end

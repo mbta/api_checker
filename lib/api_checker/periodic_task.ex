@@ -124,5 +124,4 @@ defmodule ApiChecker.PeriodicTask do
   end
 end
 
-
 # reject if it's too soon to run
