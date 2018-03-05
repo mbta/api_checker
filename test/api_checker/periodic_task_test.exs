@@ -109,12 +109,14 @@ defmodule ApiChecker.PeriodicTaskTest do
       target_time = @thursday_7_01am
       assert PeriodicTask.too_soon_to_run?(task, previous_datetime, target_time)
     end
+
     test "true for target time in the past" do
       task = @valid_periodic_task
       previous_datetime = @thursday_7am
       target_time = @thursday_6am
       assert PeriodicTask.too_soon_to_run?(task, previous_datetime, target_time)
     end
+
     test "false for responses inside of frequency range given datetime" do
       task = @valid_periodic_task
       previous_datetime = @thursday_7am

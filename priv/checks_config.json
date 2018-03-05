@@ -1,11 +1,71 @@
 [
   {
-    "name": "mbta-01",
-    "url": "https://api-v3.mbta.com/predictions?filter%5Broute%5D=Red,Orange,Blue",
+    "name": "api-v3-predictions-1",
+    "url": "https://api-v3.mbta.com/predictions?filter[route]=Red,Orange,Blue",
     "active": true,
     "frequency_in_seconds": 120,
     "time_ranges": [
-      {"type": "weekly", "day": "MON", "start": "06:30", "stop": "22:00"}
+      {"type": "weekly", "day": "SUN", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "MON", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "TUE", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "WED", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "THU", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "FRI", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "SAT", "start": "05:59", "stop": "23:59"}
+    ],
+    "checks": [
+      {"keypath": ["data"], "expects": ["array", "not_empty"]}
+    ]
+  },
+  {
+    "name": "api-v3-vehicles-1",
+    "url": "https://api-v3.mbta.com/vehicles/?route=Red,Orange,Blue",
+    "active": true,
+    "frequency_in_seconds": 120,
+    "time_ranges": [
+      {"type": "weekly", "day": "SUN", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "MON", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "TUE", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "WED", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "THU", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "FRI", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "SAT", "start": "05:59", "stop": "23:59"}
+    ],
+    "checks": [
+      {"keypath": ["data"], "expects": ["array", "not_empty"]}
+    ]
+  },
+  {
+    "name": "api-v3-predictions-2",
+    "url": "https://api-v3.mbta.com/predictions?filter%5Broute%5D=CR-Fairmount,CR-Fitchburg,CR-Worcester,CR-Franklin,CR-Greenbush,CR-Haverhill,CR-Kingston,CR-Lowell,CR-Middleborough,CR-Needham,CR-Newburyport,CR-Providence,CR-Foxboro",
+    "active": true,
+    "frequency_in_seconds": 120,
+    "time_ranges": [
+      {"type": "weekly", "day": "SUN", "start": "06:59", "stop": "23:59"},
+      {"type": "weekly", "day": "MON", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "TUE", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "WED", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "THU", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "FRI", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "SAT", "start": "06:59", "stop": "23:59"}
+    ],
+    "checks": [
+      {"keypath": ["data"], "expects": ["array", "not_empty"]}
+    ]
+  },
+  {
+    "name": "api-v3-predictions-3",
+    "url": "https://api-v3.mbta.com/predictions/?filter%5Broute%5D=1",
+    "active": true,
+    "frequency_in_seconds": 120,
+    "time_ranges": [
+      {"type": "weekly", "day": "SUN", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "MON", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "TUE", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "WED", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "THU", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "FRI", "start": "05:59", "stop": "23:59"},
+      {"type": "weekly", "day": "SAT", "start": "05:59", "stop": "23:59"}
     ],
     "checks": [
       {"keypath": ["data"], "expects": ["array", "not_empty"]}

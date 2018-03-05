@@ -11,7 +11,7 @@ defmodule ApiCheckerTest do
     active: true,
     frequency_in_seconds: 120,
     checks: [
-      %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]},
+      %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]}
     ],
     time_ranges: [
       %WeeklyTimeRange{day: "MON", start: ~T[06:30:00], stop: ~T[22:00:00]},
@@ -28,10 +28,10 @@ defmodule ApiCheckerTest do
     active: true,
     frequency_in_seconds: 120,
     checks: [
-      %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]},
+      %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]}
     ],
     time_ranges: [
-      %WeeklyTimeRange{day: "SAT", start: ~T[06:30:00], stop: ~T[22:00:00]},
+      %WeeklyTimeRange{day: "SAT", start: ~T[06:30:00], stop: ~T[22:00:00]}
     ]
   }
 
@@ -41,16 +41,16 @@ defmodule ApiCheckerTest do
     active: true,
     frequency_in_seconds: 120,
     checks: [
-      %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]},
+      %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]}
     ],
     time_ranges: [
-      %WeeklyTimeRange{day: "THU", start: ~T[06:30:00], stop: ~T[22:00:00]},
+      %WeeklyTimeRange{day: "THU", start: ~T[06:30:00], stop: ~T[22:00:00]}
     ]
   }
 
   @tasks [
-    @periodic_task_1, 
-    @periodic_task_2, 
+    @periodic_task_1,
+    @periodic_task_2,
     @periodic_task_3
   ]
 
@@ -61,7 +61,7 @@ defmodule ApiCheckerTest do
 
   @previous_responses %{
     "mbta-testing-01" => %PreviousResponse{updated_at: @thursday_12pm},
-    "mbta-testing-02" => %PreviousResponse{updated_at: @thursday_12pm},
+    "mbta-testing-02" => %PreviousResponse{updated_at: @thursday_12pm}
   }
 
   describe "tasks_due/0" do

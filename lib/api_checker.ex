@@ -17,9 +17,9 @@ defmodule ApiChecker do
   end
 
   defp task_due?(task = %PeriodicTask{}, %DateTime{} = previous_datetime, %DateTime{} = datetime) do
-    not PeriodicTask.too_soon_to_run?(task, previous_datetime, datetime)
-    && PeriodicTask.intersects?(task, datetime)
+    not PeriodicTask.too_soon_to_run?(task, previous_datetime, datetime) && PeriodicTask.intersects?(task, datetime)
   end
+
   defp task_due?(task, nil, datetime) do
     PeriodicTask.intersects?(task, datetime)
   end
@@ -32,5 +32,4 @@ defmodule ApiChecker do
 
     task_due?(task, previous_datetime, datetime)
   end
-
 end
