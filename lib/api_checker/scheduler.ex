@@ -19,6 +19,6 @@ defmodule ApiChecker.Scheduler do
     tasks = ApiChecker.tasks_due()
     TaskRunner.perform(tasks)
     Process.send_after(self(), :perform, 10_000)
-    {:noreply, state, state}
+    {:noreply, state}
   end
 end
