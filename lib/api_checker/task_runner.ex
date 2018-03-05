@@ -8,6 +8,7 @@ defmodule ApiChecker.TaskRunner do
   """
   def perform(tasks) when is_list(tasks) do
     task_results = Enum.map(tasks, &perform/1)
+
     update_previous_responses(task_results)
     task_results
   end
@@ -71,8 +72,8 @@ defmodule ApiChecker.TaskRunner do
         Logger.info(fn -> "Check OK - task_name=#{inspect(task.name)} check=#{inspect(check)}" end)
         :ok
 
-      {:error, _} = err ->
-        Logger.info(fn -> "Check Failure - task_name=#{inspect(task.name)} #{inspect(err)}" end)
+      {:error, reason} = err ->
+      Logger.info(fn -> "Check Failure - task_name=#{inspect(task.name)} check=#{inspect(check)} reason=#{reason |> to_string() |> inspect()}" end)
         err
     end
   end
