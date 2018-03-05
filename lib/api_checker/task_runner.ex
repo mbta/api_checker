@@ -17,6 +17,8 @@ defmodule ApiChecker.TaskRunner do
     task_results
   end
 
+  @allowed_status_codes [200, 201]
+
   @doc """
   Runs checks for given `PeriodicTask` struct. Logs if checks don't meet
   expectation. Returns task and new `PreviousResponse` struct.
@@ -24,9 +26,18 @@ defmodule ApiChecker.TaskRunner do
   def perform(%PeriodicTask{} = task, previous_response) do
     {status_code, body} =
       case HTTPoison.get(task.url) do
-        {:ok, %HTTPoison.Response{status_code: status, body: body}} ->
+        {:ok, %HTTPoison.Response{status_code: status_code, body: body}} when status_code in @allowed_status_codes ->
           run_checks(task, body, previous_response)
-          {status, body}
+          {status_code, body}
+
+        {:ok, %HTTPoison.Response{status_code: status_code}} ->
+          Logger.info(fn ->
+            "HTTP Error - task_name=#{inspect(task.name)} reason=#{inspect(:invalid_status_code)} status_code=#{
+              status_code
+            }"
+          end)
+
+          {status_code, nil}
 
         {:error, %HTTPoison.Error{reason: reason}} ->
           Logger.info(fn -> "HTTP Error - task_name=#{inspect(task.name)} reason=#{inspect(reason)}" end)
