@@ -1,6 +1,7 @@
 defmodule ApiChecker.TaskRunnerTest do
   use ExUnit.Case, async: true
-  alias ApiChecker.{TaskRunner, PeriodicTask, JsonCheck}
+  alias ApiChecker.{TaskRunner, PeriodicTask}
+  alias ApiChecker.Check.JsonCheck
   import ExUnit.CaptureLog
 
   @valid_periodic_task %PeriodicTask{
@@ -27,15 +28,15 @@ defmodule ApiChecker.TaskRunnerTest do
       captured = capture_log(fn -> TaskRunner.perform(@valid_periodic_task, %{}) end)
       assert captured =~ ~s(Check OK)
       assert captured =~ ~s(task_name="mbta-testing-01")
-      assert captured =~ ~s(%ApiChecker.JsonCheck{expects: ["array", "not_empty"], keypath: ["data"]})
-      assert captured =~ ~s(%ApiChecker.JsonCheck{expects: "jsonapi", keypath: ["jsonapi"]})
+      assert captured =~ ~s(%ApiChecker.Check.JsonCheck{expects: ["array", "not_empty"], keypath: ["data"]})
+      assert captured =~ ~s(%ApiChecker.Check.JsonCheck{expects: "jsonapi", keypath: ["jsonapi"]})
     end
 
     test "logs failure for failed check" do
       captured = capture_log(fn -> TaskRunner.perform(@failure_periodic_task, %{}) end)
       assert captured =~ ~s(Check Failure)
       assert captured =~ ~s(task_name="failure-task")
-      assert captured =~ ~s(%ApiChecker.JsonCheck{expects: ["array", "not_empty"], keypath: ["unexpected"]})
+      assert captured =~ ~s(%ApiChecker.Check.JsonCheck{expects: ["array", "not_empty"], keypath: ["unexpected"]})
       assert captured =~ ~s(reason="invalid_array")
     end
   end

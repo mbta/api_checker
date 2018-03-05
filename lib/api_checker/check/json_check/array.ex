@@ -1,4 +1,4 @@
-defmodule ApiChecker.JsonCheck.Array do
+defmodule ApiChecker.Check.JsonCheck.Array do
   @moduledoc """
   Functions for validating JSON arrays.
   """

@@ -1,4 +1,4 @@
-defmodule ApiChecker.JsonCheck.Jsonapi do
+defmodule ApiChecker.Check.JsonCheck.Jsonapi do
   @moduledoc """
   Validates the "jsonapi" field of an object.
   """
