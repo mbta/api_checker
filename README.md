@@ -2,6 +2,10 @@
 
 An API checker that runs periodically and logs an error when and API's HTTP response is invalid.
 
+## Architecture
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the overall architecture of the system.
+
 ## Summary
 
 The V3 API (https://api-v3.mbta.com) replaced an existing API for the MBTA’s realtime data. A part of the existing API was a checker, running periodically, and e-mailing if there was a problem.
