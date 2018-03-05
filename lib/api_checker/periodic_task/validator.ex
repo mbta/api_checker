@@ -2,8 +2,7 @@ defmodule ApiChecker.PeriodicTask.Validator do
   @moduledoc """
   Validates a PeriodicTask struct's values.
   """
-  alias ApiChecker.PeriodicTask
-  alias ApiChecker.JsonCheck
+  alias ApiChecker.{PeriodicTask, Check}
   alias ApiChecker.PeriodicTask.{WeeklyTimeRange}
 
   @doc """
@@ -18,7 +17,7 @@ defmodule ApiChecker.PeriodicTask.Validator do
          :ok <- run_validation(task, :url, &is_valid_url?/1, "must be a valid url"),
          :ok <- run_validation(task, :time_ranges, &is_list_of_time_ranges?/1, "must be a list of valid time ranges"),
          :ok <- run_validation(task, :active, &is_boolean/1, "must be a boolean"),
-         :ok <- run_validation(task, :checks, &is_list_of_json_checks?/1, "must be a list of valid json checks") do
+         :ok <- run_validation(task, :checks, &is_list_of_checks?/1, "must be a list of valid checks") do
       :ok
     else
       {:error, _} = err ->
@@ -142,33 +141,29 @@ defmodule ApiChecker.PeriodicTask.Validator do
 
   Returns false for anything else.
 
-  iex> Validator.is_list_of_json_checks?([])
+  iex> Validator.is_list_of_checks?([])
   false
 
-  iex> Validator.is_list_of_json_checks?([%JsonCheck{expects: "not_empty"}])
+  iex> Validator.is_list_of_checks?([%JsonCheck{expects: "not_empty"}])
   true
 
-  iex> Validator.is_list_of_json_checks?([%JsonCheck{expects: "not_a_real_expectation"}])
+  iex> Validator.is_list_of_checks?([%JsonCheck{expects: "not_a_real_expectation"}])
   false
   """
-  def is_list_of_json_checks?([]) do
+  def is_list_of_checks?([]) do
     false
   end
 
-  def is_list_of_json_checks?(list) when is_list(list) do
-    Enum.all?(list, &is_json_check?/1)
+  def is_list_of_checks?(list) when is_list(list) do
+    Enum.all?(list, &is_check?/1)
   end
 
-  def is_list_of_json_checks?(_) do
+  def is_list_of_checks?(_) do
     false
   end
 
-  def is_json_check?(%JsonCheck{} = json_check) do
-    JsonCheck.validate_struct(json_check) == :ok
-  end
-
-  def is_json_check?(_) do
-    false
+  def is_check?(thing) do
+    Check.validate(thing) == :ok
   end
 
   @doc """

@@ -16,13 +16,15 @@ defmodule ApiChecker.TaskRunnerTest do
     name: "failure-task",
     url: "https://api-v3.mbta.com/predictions?filter%5Broute%5D=Red,Orange,Blue",
     checks: [
-      %JsonCheck{keypath: ["unexpected"], expects: ["array", "not_empty"]},
+      %JsonCheck{keypath: ["unexpected"], expects: ["array", "not_empty"]}
     ]
   }
 
   describe "perform/1" do
+    # previous response is passed as %{}.
+
     test "can run one task with multiple checks" do
-      captured = capture_log(fn -> TaskRunner.perform(@valid_periodic_task) end)
+      captured = capture_log(fn -> TaskRunner.perform(@valid_periodic_task, %{}) end)
       assert captured =~ ~s(Check OK)
       assert captured =~ ~s(task_name="mbta-testing-01")
       assert captured =~ ~s(%ApiChecker.JsonCheck{expects: ["array", "not_empty"], keypath: ["data"]})
@@ -30,7 +32,7 @@ defmodule ApiChecker.TaskRunnerTest do
     end
 
     test "logs failure for failed check" do
-      captured = capture_log(fn -> TaskRunner.perform(@failure_periodic_task) end)
+      captured = capture_log(fn -> TaskRunner.perform(@failure_periodic_task, %{}) end)
       assert captured =~ ~s(Check Failure)
       assert captured =~ ~s(task_name="failure-task")
       assert captured =~ ~s(%ApiChecker.JsonCheck{expects: ["array", "not_empty"], keypath: ["unexpected"]})
@@ -38,10 +40,9 @@ defmodule ApiChecker.TaskRunnerTest do
     end
   end
 
-    test "can run one multiple tasks" do
-      captured = capture_log(fn -> TaskRunner.perform([@valid_periodic_task, @failure_periodic_task]) end)
-      assert captured =~ ~s(Check OK - task_name="mbta-testing-01")
-      assert captured =~ ~s(Check Failure - task_name="failure-task")
-    end
-
+  test "can run one multiple tasks" do
+    captured = capture_log(fn -> TaskRunner.perform([@valid_periodic_task, @failure_periodic_task], %{}) end)
+    assert captured =~ ~s(Check OK - task_name="mbta-testing-01")
+    assert captured =~ ~s(Check Failure - task_name="failure-task")
+  end
 end

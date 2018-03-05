@@ -17,7 +17,8 @@ defmodule ApiChecker.Scheduler do
 
   def handle_info(:perform, state) do
     tasks = ApiChecker.tasks_due()
-    TaskRunner.perform(tasks)
+    previous_responses = ApiChecker.get_previous_responses()
+    TaskRunner.perform(tasks, previous_responses)
     Process.send_after(self(), :perform, 10_000)
     {:noreply, state}
   end

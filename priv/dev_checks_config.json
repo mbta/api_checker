@@ -1,0 +1,19 @@
+[{
+    "name": "api-v3-predictions-1",
+    "url": "https://api-v3.mbta.com/predictions?filter[route]=Red,Orange,Blue",
+    "active": true,
+    "frequency_in_seconds": 120,
+    "time_ranges": [
+        { "type": "weekly", "day": "SUN", "start": "05:59", "stop": "23:59" },
+        { "type": "weekly", "day": "MON", "start": "05:59", "stop": "23:59" },
+        { "type": "weekly", "day": "TUE", "start": "05:59", "stop": "23:59" },
+        { "type": "weekly", "day": "WED", "start": "05:59", "stop": "23:59" },
+        { "type": "weekly", "day": "THU", "start": "05:59", "stop": "23:59" },
+        { "type": "weekly", "day": "FRI", "start": "05:59", "stop": "23:59" },
+        { "type": "weekly", "day": "SAT", "start": "05:59", "stop": "23:59" }
+    ],
+    "checks": [
+        { "type": "stale", "time_limit_in_seconds": 119 },
+        { "type": "json", "keypath": ["data"], "expects": ["array", "not_empty"] }
+    ]
+}]

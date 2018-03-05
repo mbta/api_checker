@@ -17,6 +17,10 @@ defmodule ApiChecker.PreviousResponse do
     GenServer.call(__MODULE__, :get_all)
   end
 
+  def get(name) do
+    GenServer.call(__MODULE__, {:get, name})
+  end
+
   def upsert(previous_responses) do
     GenServer.call(__MODULE__, {:upsert, previous_responses})
   end
@@ -27,6 +31,10 @@ defmodule ApiChecker.PreviousResponse do
 
   def handle_call(:get_all, _from, state) do
     {:reply, state, state}
+  end
+
+  def handle_call({:get, name}, _from, previous_responses) do
+    {:reply, Map.get(previous_responses, name), previous_responses}
   end
 
   def handle_call({:upsert, latest_responses}, _from, previous_responses) do
