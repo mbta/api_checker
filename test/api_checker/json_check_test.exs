@@ -2,6 +2,7 @@ defmodule ApiChecker.JsonCheckTest do
   use ExUnit.Case, async: true
   alias ApiChecker.JsonCheck
   alias ApiChecker.JsonCheck.{Vehicle, Jsonapi, Array}
+  alias ApiChecker.Check.Params
   doctest ApiChecker.JsonCheck
 
   describe "from_json/1" do
@@ -33,9 +34,13 @@ defmodule ApiChecker.JsonCheckTest do
         }
       }
 
-      assert :ok = JsonCheck.run_check(json_check, valid_json)
-      assert {:error, _} = JsonCheck.run_check(json_check, invalid_json1)
-      assert {:error, _} = JsonCheck.run_check(json_check, invalid_json2)
+      params = %Params{decoded_body: valid_json}
+      invalid_params1 = %Params{decoded_body: invalid_json1}
+      invalid_params2 = %Params{decoded_body: invalid_json2}
+
+      assert :ok = JsonCheck.run_check(json_check, params)
+      assert {:error, _} = JsonCheck.run_check(json_check, invalid_params1)
+      assert {:error, _} = JsonCheck.run_check(json_check, invalid_params2)
     end
   end
 end

@@ -3,7 +3,7 @@ defmodule ApiChecker.PeriodicTask do
   Provides context, parsing, validating for configuration of
   a PeriodicTask with the intention of configuring a worker process.
   """
-  alias ApiChecker.{PeriodicTask, JsonCheck}
+  alias ApiChecker.{PeriodicTask, Check}
   alias ApiChecker.PeriodicTask.{WeeklyTimeRange, Times}
 
   defstruct frequency_in_seconds: nil,
@@ -76,7 +76,7 @@ defmodule ApiChecker.PeriodicTask do
   end
 
   def json_config_to_json_check(json) when is_map(json) do
-    case JsonCheck.from_json(json) do
+    case Check.from_json(json) do
       {:ok, json_check} ->
         json_check
 

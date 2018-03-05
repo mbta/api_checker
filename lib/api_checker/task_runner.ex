@@ -1,6 +1,7 @@
 defmodule ApiChecker.TaskRunner do
   require Logger
-  alias ApiChecker.{PeriodicTask, PreviousResponse, JsonCheck}
+  alias ApiChecker.{PeriodicTask, PreviousResponse, Check}
+  alias ApiChecker.Check.Params
 
   @doc """
   Runs tasks and updates `PreviousResponse` state with task results.
@@ -46,10 +47,11 @@ defmodule ApiChecker.TaskRunner do
     PreviousResponse.upsert(previous_responses)
   end
 
-  defp run_checks(task, body) when is_binary(body) do
-    case Jason.decode(body) do
+  defp run_checks(task, raw_body) when is_binary(raw_body) do
+    case Jason.decode(raw_body) do
       {:ok, decoded_body} ->
-        run_checks(task, decoded_body)
+        params = %Params{raw_body: raw_body, decoded_body: decoded_body}
+        run_checks(task, params)
 
       {:error, _} = err ->
         Logger.info(fn -> "JSON Decoding Error - task_name=#{inspect(task.name)} error=#{inspect(err)}" end)
@@ -57,16 +59,16 @@ defmodule ApiChecker.TaskRunner do
     end
   end
 
-  defp run_checks(task, decoded_body) do
-    for json_check <- task.checks do
-      run_check(json_check, decoded_body, task)
+  defp run_checks(task, params) do
+    for check <- task.checks do
+      run_check(check, params, task)
     end
   end
 
-  def run_check(json_check, decoded_body, task) do
-    case JsonCheck.run_check(json_check, decoded_body) do
+  def run_check(check, params, task) do
+    case Check.run_check(check, params) do
       :ok ->
-        Logger.info(fn -> "Check OK - task_name=#{inspect(task.name)} check=#{inspect(json_check)}" end)
+        Logger.info(fn -> "Check OK - task_name=#{inspect(task.name)} check=#{inspect(check)}" end)
         :ok
 
       {:error, _} = err ->

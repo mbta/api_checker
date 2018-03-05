@@ -15,14 +15,17 @@ defmodule ApiChecker.JsonCheck do
       %{"keypath" => "data", "expects" => ["array", "not_empty"]}
       iex> payload = %{"data" => ["oh_look_some_vehicles"]}
       %{"data" => ["oh_look_some_vehicles"]}
+      iex> params = %Params{decoded_body: payload}
+      %Params{decoded_body: %{"data" => ["oh_look_some_vehicles"]}}
       iex> {:ok, json_check} = JsonCheck.from_json(json_check_config)
       {:ok, %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]}}
-      iex> JsonCheck.run_check(json_check, payload)
+      iex> JsonCheck.run_check(json_check, params)
       :ok
   """
 
   alias ApiChecker.JsonCheck
   alias ApiChecker.JsonCheck.{Vehicle, Jsonapi, Array}
+  alias ApiChecker.Check.Params
 
   defstruct keypath: [],
             # params: nil, # keep this here for the future -JLG
@@ -144,8 +147,8 @@ defmodule ApiChecker.JsonCheck do
     end
   end
 
-  def run_check(%JsonCheck{} = json_check, data) do
-    found = get_keypath(json_check, data)
+  def run_check(%JsonCheck{} = json_check, %Params{decoded_body: decoded_body}) do
+    found = get_keypath(json_check, decoded_body)
 
     case get_expectation_func(json_check.expects) do
       {:ok, expectation_func} ->

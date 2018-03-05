@@ -14,7 +14,7 @@
       {"type": "weekly", "day": "SAT", "start": "05:59", "stop": "23:59"}
     ],
     "checks": [
-      {"keypath": ["data"], "expects": ["array", "not_empty"]}
+      {"type": "json", "keypath": ["data"], "expects": ["array", "not_empty"]}
     ]
   },
   {
@@ -32,7 +32,7 @@
       {"type": "weekly", "day": "SAT", "start": "05:59", "stop": "23:59"}
     ],
     "checks": [
-      {"keypath": ["data"], "expects": ["array", "not_empty"]}
+      {"type": "json", "keypath": ["data"], "expects": ["array", "not_empty"]}
     ]
   },
   {
@@ -50,7 +50,7 @@
       {"type": "weekly", "day": "SAT", "start": "06:59", "stop": "23:59"}
     ],
     "checks": [
-      {"keypath": ["data"], "expects": ["array", "not_empty"]}
+      {"type": "json", "keypath": ["data"], "expects": ["array", "not_empty"]}
     ]
   },
   {
@@ -68,7 +68,7 @@
       {"type": "weekly", "day": "SAT", "start": "05:59", "stop": "23:59"}
     ],
     "checks": [
-      {"keypath": ["data"], "expects": ["array", "not_empty"]}
+      {"type": "json", "keypath": ["data"], "expects": ["array", "not_empty"]}
     ]
   }
 ]

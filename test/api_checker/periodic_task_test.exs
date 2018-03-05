@@ -18,8 +18,8 @@ defmodule ApiChecker.PeriodicTaskTest do
       %{"type" => "weekly", "day" => "FRI", "start" => "06:30", "stop" => "22:00"}
     ],
     "checks" => [
-      %{"keypath" => ["data"], "expects" => ["array", "not_empty"]},
-      %{"keypath" => ["jsonapi"], "expects" => "jsonapi"}
+      %{"type" => "json", "keypath" => ["data"], "expects" => ["array", "not_empty"]},
+      %{"type" => "json", "keypath" => ["jsonapi"], "expects" => "jsonapi"}
     ]
   }
 
