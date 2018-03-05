@@ -1,7 +1,7 @@
-defmodule ApiChecker.JsonCheck.ArrayTest do
+defmodule ApiChecker.Check.JsonCheck.ArrayTest do
   use ExUnit.Case, async: true
-  alias ApiChecker.JsonCheck.{Array, Jsonapi}
-  doctest ApiChecker.JsonCheck.Array
+  alias ApiChecker.Check.JsonCheck.{Array, Jsonapi}
+  doctest Array
 
   describe "validate_items/2" do
     test "works for a list of valid items" do

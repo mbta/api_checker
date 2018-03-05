@@ -1,4 +1,4 @@
-defmodule ApiChecker.JsonCheck do
+defmodule ApiChecker.Check.JsonCheck do
   @moduledoc """
   Takes json configuration and parses it into a valid JsonCheck
   struct which can be used to validate json payloads.
@@ -23,9 +23,8 @@ defmodule ApiChecker.JsonCheck do
       :ok
   """
 
-  alias ApiChecker.JsonCheck
-  alias ApiChecker.JsonCheck.{Vehicle, Jsonapi, Array}
-  alias ApiChecker.Check.Params
+  alias ApiChecker.Check.{JsonCheck, Params}
+  alias JsonCheck.{Vehicle, Jsonapi, Array}
 
   defstruct keypath: [],
             # params: nil, # keep this here for the future -JLG

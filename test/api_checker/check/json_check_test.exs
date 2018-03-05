@@ -1,9 +1,8 @@
-defmodule ApiChecker.JsonCheckTest do
+defmodule ApiChecker.Check.JsonCheckTest do
   use ExUnit.Case, async: true
-  alias ApiChecker.JsonCheck
-  alias ApiChecker.JsonCheck.{Vehicle, Jsonapi, Array}
-  alias ApiChecker.Check.Params
-  doctest ApiChecker.JsonCheck
+  alias ApiChecker.Check.{JsonCheck, Params}
+  alias JsonCheck.{Vehicle, Jsonapi, Array}
+  doctest JsonCheck
 
   describe "from_json/1" do
     test "valid json is turned into a struct as expected and is run_check-able" do

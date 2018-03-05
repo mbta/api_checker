@@ -1,4 +1,4 @@
-defmodule ApiChecker.JsonCheck.Vehicle do
+defmodule ApiChecker.Check.JsonCheck.Vehicle do
   @moduledoc """
   The JSON check for a "vehicle".
 
