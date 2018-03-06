@@ -37,10 +37,6 @@ A perodic task is configured by placing a json `array` of valid periodic task JS
 
 + `./priv/test_checks_config.json`
 
-+ `./priv/prod_checks_config.json`
-
-
-
 ### Periodic Task JSON Object
 
 A periodic task configures a schedule to run API `checks` in a given `frequency_in_seconds` against the provided `url` during the time of it's `time_ranges`.
@@ -64,7 +60,7 @@ An example of a periodic JSON object for configuration of a periodic task:
     ],
     "checks": [
         { "type": "stale", "time_limit_in_seconds": 119 },
-        { "type": "json", "keypath": ["data"], "expects": ["array", "not_empty"] }
+        { "type": "json", "keypath": ["data"], "expects": "not_empty" }
     ]
 }
 ```
@@ -127,16 +123,16 @@ JSON payload checks belong in an array on the `checks` field of a periodic task 
 A typical JSON payload check that checks a response for object's `"data"` field for an array that is not empty:
 
 ```json 
-{ "type": "json", "keypath": ["data"], "expects": ["array", "not_empty"] }
+{ "type": "json", "keypath": ["data"], "expects": "not_empty" }
 ```
 
 The `type` field for a JSON payload check must be `"json"`.
 
 The `keypath` field is an array of key selectors that "select" values from nested json.
 
-The `expects` field is array of strings or a string that declaratively indicates what checks to perform on the value selected by `keypath`. The allowed validators for `expects` are: `"not_empty"` and `"jsonapi"`. Validators can be placed directly in the `expects` or can be modified by putting the validator as the second item in an array that has `"array"` as the first item. Such as `["array", "not_empty"]` which indicate that an array is expected and that array cannot be empty.
-
-There also exists a `"vehicle"` validator, but this check will always fail because the vehicle validation's logic is not yet implemented.
+The `expects` field is a string that declaratively indicates what checks to
+perform on the value selected by `keypath`. The allowed validators for
+`expects` are: `"not_empty"` and `"jsonapi"`.
 
 ## Initial checks
 
