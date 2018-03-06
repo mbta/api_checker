@@ -4,15 +4,19 @@ defmodule ApiChecker do
   """
   alias ApiChecker.{PeriodicTask, Schedule, PreviousResponse}
 
-  def get_tasks() do
-    Schedule.get_tasks()
+  def get_tasks!() do
+    Schedule.get_tasks!()
   end
 
   def get_previous_responses() do
     PreviousResponse.get_all()
   end
 
-  def tasks_due(tasks \\ get_tasks(), previous_responses \\ get_previous_responses(), datetime \\ DateTime.utc_now()) do
+  def tasks_due!(tasks \\ get_tasks!(), previous_responses \\ get_previous_responses(), datetime \\ DateTime.utc_now()) do
+    tasks_due(tasks, previous_responses, datetime)
+  end
+
+  def tasks_due(tasks, previous_responses, %DateTime{} = datetime) when is_list(tasks) and is_map(previous_responses) do
     Enum.filter(tasks, &task_due?(&1, previous_responses, datetime))
   end
 

@@ -2,60 +2,82 @@ defmodule ApiChecker.Schedule do
   @moduledoc """
   Keeps track of the scheduled tasks.
   """
-
-  def get_filename() do
-    Application.get_env(:api_checker, :checks_config_json_filename)
-  end
-
-  use GenServer
+  require Logger
   alias ApiChecker.PeriodicTask
-  # @json_checks_config_file_path "./priv/checks_config.json"
 
-  defstruct tasks: []
+  @env_var "API_CHECKER_CONFIGURATION"
 
-  def start_link(_) do
-    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+  def env_var, do: @env_var
+
+  def get_tasks!() do
+    @env_var
+    |> load_env_var!
+    |> decode_json!
+    |> to_periodic_tasks!
   end
 
-  def get_tasks() do
-    GenServer.call(__MODULE__, :get_tasks)
-  end
+  defp load_env_var!(varname) do
+    case System.get_env(varname) do
+      data when data in [nil, ""] ->
+        Logger.error(fn ->
+          "ApiChecker Configuration Error - #{inspect(@env_var)} must be set in the environment."
+        end)
 
-  def init(_) do
-    periodic_tasks = load_config_file()
-    {:ok, %__MODULE__{tasks: periodic_tasks}}
-  end
+        invalid_config_shutdown()
 
-  def handle_call(:get_tasks, _from, state) do
-    {:reply, state.tasks, state}
-  end
-
-  def load_config_file() do
-    filename = get_filename()
-
-    if !is_binary(filename) do
-      raise "A filename is required to configure ApiChecker via json"
+      json when is_binary(json) ->
+        json
     end
-
-    filepath = Path.join(["./priv", filename])
-
-    filepath
-    |> File.read!()
-    |> Jason.decode!()
-    |> to_periodic_tasks!(filepath)
   end
 
-  def to_periodic_tasks!(checks, filepath) do
-    Enum.map(checks, fn check -> periodic_task_from_json_config!(check, filepath) end)
+  defp decode_json!(json) do
+    case Jason.decode(json) do
+      {:ok, config} ->
+        config
+
+      {:error, _} ->
+        Logger.error(fn ->
+          "ApiChecker Configuration Error - #{inspect(@env_var)} must be valid json."
+        end)
+
+        invalid_config_shutdown()
+    end
   end
 
-  def periodic_task_from_json_config!(json_check_config, filepath) do
-    case PeriodicTask.from_json(json_check_config) do
+  defp to_periodic_tasks!(checks) do
+    checks
+    |> Enum.with_index()
+    |> Enum.map(fn {check, index} -> periodic_task_from_json_config!(check, index) end)
+  end
+
+  defp periodic_task_from_json_config!(config, index) do
+    case PeriodicTask.from_json(config) do
       {:ok, periodic_task} ->
         periodic_task
 
-      {:error, _} = err ->
-        raise "Error in #{inspect(filepath)}': #{inspect(err)}"
+      {:error, _} ->
+        Logger.error(fn ->
+          "ApiChecker Configuration Error - the task at index #{index} was not valid."
+        end)
+
+        invalid_config_shutdown()
     end
+  end
+
+  def invalid_config_shutdown() do
+    Logger.error(fn ->
+      """
+      ApiChecker Configuration Error
+
+      Invalid Configuration: please ensure the enviroment variable #{@env_var}
+      is properly configured before restarting the application.
+
+      ...Shutting Down...
+      """
+    end)
+
+    System.stop()
+    # prevents the supervision tree from restarting repeatedly during system stop.
+    :timer.sleep(:infinity)
   end
 end
