@@ -1,4 +1,7 @@
 defmodule ApiChecker.PeriodicTask.Days do
+  @moduledoc """
+  Functions for dealing with days.
+  """
   alias ApiChecker.PeriodicTask.Times
   # The order matters.
   # Monday comes first.

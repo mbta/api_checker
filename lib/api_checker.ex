@@ -20,7 +20,7 @@ defmodule ApiChecker do
     Enum.filter(tasks, &task_due?(&1, previous_responses, datetime))
   end
 
-  defp task_due?(task = %PeriodicTask{}, %DateTime{} = previous_datetime, %DateTime{} = datetime) do
+  defp task_due?(%PeriodicTask{} = task, %DateTime{} = previous_datetime, %DateTime{} = datetime) do
     not PeriodicTask.too_soon_to_run?(task, previous_datetime, datetime) && PeriodicTask.intersects?(task, datetime)
   end
 

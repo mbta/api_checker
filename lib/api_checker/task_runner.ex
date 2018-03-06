@@ -1,4 +1,8 @@
 defmodule ApiChecker.TaskRunner do
+  @moduledoc """
+  Responsible for running tasks "periodic tasks". Periodic tasks are
+  represented by `ApiChecker.PeriodicTask` structs.
+  """
   require Logger
   alias ApiChecker.{PeriodicTask, PreviousResponse, Check}
   alias ApiChecker.Check.Params
