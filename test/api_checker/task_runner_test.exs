@@ -8,7 +8,7 @@ defmodule ApiChecker.TaskRunnerTest do
     name: "mbta-testing-01",
     url: "https://api-v3.mbta.com/predictions?filter%5Broute%5D=Red,Orange,Blue",
     checks: [
-      %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]},
+      %JsonCheck{keypath: ["data"], expects: "not_empty"},
       %JsonCheck{keypath: ["jsonapi"], expects: "jsonapi"}
     ]
   }
@@ -17,7 +17,7 @@ defmodule ApiChecker.TaskRunnerTest do
     name: "failure-task",
     url: "https://api-v3.mbta.com/predictions?filter%5Broute%5D=Red,Orange,Blue",
     checks: [
-      %JsonCheck{keypath: ["unexpected"], expects: ["array", "not_empty"]}
+      %JsonCheck{keypath: ["unexpected"], expects: "not_empty"}
     ]
   }
 
@@ -28,7 +28,7 @@ defmodule ApiChecker.TaskRunnerTest do
       captured = capture_log(fn -> TaskRunner.perform(@valid_periodic_task, %{}) end)
       assert captured =~ ~s(Check OK)
       assert captured =~ ~s(task_name="mbta-testing-01")
-      assert captured =~ ~s(%ApiChecker.Check.JsonCheck{expects: ["array", "not_empty"], keypath: ["data"]})
+      assert captured =~ ~s(%ApiChecker.Check.JsonCheck{expects: "not_empty", keypath: ["data"]})
       assert captured =~ ~s(%ApiChecker.Check.JsonCheck{expects: "jsonapi", keypath: ["jsonapi"]})
     end
 
@@ -36,7 +36,7 @@ defmodule ApiChecker.TaskRunnerTest do
       captured = capture_log(fn -> TaskRunner.perform(@failure_periodic_task, %{}) end)
       assert captured =~ ~s(Check Failure)
       assert captured =~ ~s(task_name="failure-task")
-      assert captured =~ ~s(%ApiChecker.Check.JsonCheck{expects: ["array", "not_empty"], keypath: ["unexpected"]})
+      assert captured =~ ~s(%ApiChecker.Check.JsonCheck{expects: "not_empty", keypath: ["unexpected"]})
       assert captured =~ ~s(reason="invalid_array")
     end
   end

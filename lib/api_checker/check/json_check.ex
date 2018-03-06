@@ -7,18 +7,18 @@ defmodule ApiChecker.Check.JsonCheck do
 
   Given a valid `json_check_config` and a valid `json_payload`,
   an `JsonCheck` struct can be generated and used to validate
-  the `json_payload`. Using the `["array", "not_empty"]` as the `expects` field
+  the `json_payload`. Using `"not_empty"` as the `expects` field
   and `"data"` as the `keypath` field in the `json_check_config` the
   `json_payload`'s `data` field is checked for a non-empty-array value (cannot be `[]`):
 
-      iex> json_check_config = %{"keypath" => "data", "expects" => ["array", "not_empty"]}
-      %{"keypath" => "data", "expects" => ["array", "not_empty"]}
+      iex> json_check_config = %{"keypath" => "data", "expects" => "not_empty"}
+      %{"keypath" => "data", "expects" => "not_empty"}
       iex> payload = %{"data" => ["oh_look_some_vehicles"]}
       %{"data" => ["oh_look_some_vehicles"]}
       iex> params = %Params{decoded_body: payload}
       %Params{decoded_body: %{"data" => ["oh_look_some_vehicles"]}}
       iex> {:ok, json_check} = JsonCheck.from_json(json_check_config)
-      {:ok, %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]}}
+      {:ok, %JsonCheck{keypath: ["data"], expects: "not_empty"}}
       iex> JsonCheck.run_check(json_check, params)
       :ok
   """
@@ -33,8 +33,7 @@ defmodule ApiChecker.Check.JsonCheck do
   @expectations %{
     "vehicle" => &Vehicle.validate/1,
     "jsonapi" => &Jsonapi.validate/1,
-    "not_empty" => &Array.validate_not_empty/1,
-    ["array", "not_empty"] => &Array.validate_not_empty/1
+    "not_empty" => &Array.validate_not_empty/1
   }
 
   @doc """
@@ -78,10 +77,10 @@ defmodule ApiChecker.Check.JsonCheck do
   iex> JsonCheck.get_expectation_func("jsonapi")
   {:ok, &Jsonapi.validate/1}
 
-  iex> JsonCheck.get_expectation_func(["array", "not_empty"])
+  iex> JsonCheck.get_expectation_func("not_empty")
   {:ok, &Array.validate_not_empty/1}
 
-  iex> JsonCheck.get_expectation_func(["array", "jsonapi"]) |> elem(1) |> is_function(1)
+  iex> JsonCheck.get_expectation_func("jsonapi") |> elem(1) |> is_function(1)
   true
   """
   def get_expectation_func(name) when is_binary(name) do
@@ -91,24 +90,6 @@ defmodule ApiChecker.Check.JsonCheck do
 
       _ ->
         {:error, :no_such_expectation}
-    end
-  end
-
-  def get_expectation_func(["array", "not_empty"]) do
-    {:ok, &Array.validate_not_empty/1}
-  end
-
-  def get_expectation_func(["array", subname]) when is_binary(subname) do
-    case get_expectation_func(subname) do
-      {:ok, expectation} ->
-        expectation_func = fn items ->
-          Array.validate_items(items, expectation)
-        end
-
-        {:ok, expectation_func}
-
-      error ->
-        error
     end
   end
 

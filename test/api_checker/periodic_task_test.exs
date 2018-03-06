@@ -19,7 +19,7 @@ defmodule ApiChecker.PeriodicTaskTest do
       %{"type" => "weekly", "day" => "FRI", "start" => "06:30", "stop" => "22:00"}
     ],
     "checks" => [
-      %{"type" => "json", "keypath" => ["data"], "expects" => ["array", "not_empty"]},
+      %{"type" => "json", "keypath" => ["data"], "expects" => "not_empty"},
       %{"type" => "json", "keypath" => ["jsonapi"], "expects" => "jsonapi"}
     ]
   }
@@ -29,7 +29,7 @@ defmodule ApiChecker.PeriodicTaskTest do
       assert {:ok, task} = PeriodicTask.from_json(@valid_periodic_task_json)
 
       assert task.checks == [
-               %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]},
+               %JsonCheck{keypath: ["data"], expects: "not_empty"},
                %JsonCheck{keypath: ["jsonapi"], expects: "jsonapi"}
              ]
 
