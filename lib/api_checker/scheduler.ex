@@ -11,12 +11,12 @@ defmodule ApiChecker.Scheduler do
   end
 
   def init(_) do
-    Process.send_after(self(), :perform, 5_000)
+    send(self(), :perform)
     {:ok, nil}
   end
 
   def handle_info(:perform, state) do
-    tasks = ApiChecker.tasks_due()
+    tasks = ApiChecker.tasks_due!()
     previous_responses = ApiChecker.get_previous_responses()
     TaskRunner.perform(tasks, previous_responses)
     Process.send_after(self(), :perform, 10_000)
