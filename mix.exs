@@ -24,7 +24,8 @@ defmodule ApiChecker.Mixfile do
     [
       {:jason, "~> 1.0"},
       {:timex, "~> 3.2"},
-      {:httpoison, "~> 1.0"}
+      {:httpoison, "~> 1.0"},
+      {:credo, "~> 0.9.0-rc1", only: [:dev], runtime: false}
     ]
   end
 end

@@ -1,4 +1,8 @@
 defmodule ApiChecker.PeriodicTask.Times do
+  @moduledoc """
+  Functions for dealing with time/datetimes.
+  """
+
   @doc """
   This is the timezone for MBTA is EST (Eastern Standard Time -0500).
 
