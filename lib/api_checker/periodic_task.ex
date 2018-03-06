@@ -10,7 +10,6 @@ defmodule ApiChecker.PeriodicTask do
             time_ranges: [],
             name: nil,
             url: nil,
-            active: nil,
             checks: []
 
   @doc """
@@ -32,7 +31,6 @@ defmodule ApiChecker.PeriodicTask do
          time_ranges: time_ranges,
          name: json["name"],
          url: json["url"],
-         active: true,
          checks: checks
        }}
     else

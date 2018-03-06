@@ -9,7 +9,6 @@ defmodule ApiCheckerTest do
   @periodic_task_1 %PeriodicTask{
     name: "mbta-testing-01",
     url: "https://api-v3.mbta.com/predictions?filter%5Broute%5D=Red,Orange,Blue",
-    active: true,
     frequency_in_seconds: 120,
     checks: [
       %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]}
@@ -26,7 +25,6 @@ defmodule ApiCheckerTest do
   @periodic_task_2 %PeriodicTask{
     name: "mbta-testing-02",
     url: "http://realtime.mbta.com/developer/api/v2/vehiclesbyroutes?format=json&routes=1",
-    active: true,
     frequency_in_seconds: 120,
     checks: [
       %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]}
@@ -39,7 +37,6 @@ defmodule ApiCheckerTest do
   @periodic_task_3 %PeriodicTask{
     name: "mbta-testing-03",
     url: "http://realtime.mbta.com/developer/api/v2/vehicles",
-    active: true,
     frequency_in_seconds: 120,
     checks: [
       %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]}

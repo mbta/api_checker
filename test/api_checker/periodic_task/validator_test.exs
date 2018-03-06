@@ -21,8 +21,6 @@ defmodule ApiChecker.PeriodicTask.ValidatorTest do
     name: "valid-periodic-task-validator-test",
     url: "http://google.com",
     time_ranges: [@valid_time_range],
-    # data_age_limit: 300,
-    active: true,
     checks: [@valid_json_check]
   }
 
