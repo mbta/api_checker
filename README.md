@@ -162,3 +162,21 @@ Run every 2 minutes
 ## Sample configuration from previous feed
 
 https://mbtace.slack.com/files/U32MH8RCK/F9F0HTF96/apicalls.json
+
+## Docker
+
+Build tagged container:
+
+`docker build -t api-checker:latest .`
+
+To demo this in Docker using dev config, run this command after building:
+
+`docker run -e "API_CHECKER_CONFIGURATION=$(cat ./priv/dev_checks_config.json)" api-checker:latest`
+
+To see the name of your container:
+
+`docker ps`
+
+To stop the container:
+
+`docker stop CONTAINER_NAME`

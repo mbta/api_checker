@@ -3,6 +3,7 @@
   "certifi": {:hex, :certifi, "2.0.0", "a0c0e475107135f76b8c1d5bc7efb33cd3815cb3cf3dea7aefdd174dabead064", [:rebar3], [], "hexpm"},
   "combine": {:hex, :combine, "0.10.0", "eff8224eeb56498a2af13011d142c5e7997a80c8f5b97c499f84c841032e429f", [:mix], [], "hexpm"},
   "credo": {:hex, :credo, "0.9.0-rc8", "30d8633408353d08db03f3ea5a14a2aaee84268c19b5198f5963916634a16558", [], [{:bunt, "~> 0.2.0", [hex: :bunt, repo: "hexpm", optional: false]}, {:poison, ">= 0.0.0", [hex: :poison, repo: "hexpm", optional: false]}], "hexpm"},
+  "distillery": {:hex, :distillery, "1.5.2", "eec18b2d37b55b0bcb670cf2bcf64228ed38ce8b046bb30a9b636a6f5a4c0080", [], [], "hexpm"},
   "excoveralls": {:hex, :excoveralls, "0.8.1", "0bbf67f22c7dbf7503981d21a5eef5db8bbc3cb86e70d3798e8c802c74fa5e27", [], [{:exjsx, ">= 3.0.0", [hex: :exjsx, repo: "hexpm", optional: false]}, {:hackney, ">= 0.12.0", [hex: :hackney, repo: "hexpm", optional: false]}], "hexpm"},
   "exjsx": {:hex, :exjsx, "4.0.0", "60548841e0212df401e38e63c0078ec57b33e7ea49b032c796ccad8cde794b5c", [], [{:jsx, "~> 2.8.0", [hex: :jsx, repo: "hexpm", optional: false]}], "hexpm"},
   "gettext": {:hex, :gettext, "0.15.0", "40a2b8ce33a80ced7727e36768499fc9286881c43ebafccae6bab731e2b2b8ce", [:mix], [], "hexpm"},

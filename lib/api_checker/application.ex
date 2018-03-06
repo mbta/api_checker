@@ -6,25 +6,27 @@ defmodule ApiChecker.Application do
   use Application
 
   @doc """
-  Automatically sets up config env var 
+  Automatically sets up config env var
   """
   def load_env_vars_from_file do
     config = System.get_env(ApiChecker.Schedule.env_var())
 
-    filename =
-      case {Mix.env(), config} do
-        {:test, nil} -> "./priv/test_checks_config.json"
-        {:dev, nil} -> "./priv/dev_checks_config.json"
-        _ -> nil
-      end
+    if Code.ensure_loaded?(Mix) do
+      filename =
+        case {Mix.env(), config} do
+          {:test, nil} -> "./priv/test_checks_config.json"
+          {:dev, nil} -> "./priv/dev_checks_config.json"
+          _ -> nil
+        end
 
-    case filename do
-      x when is_binary(x) ->
-        config = File.read!(filename)
-        System.put_env(ApiChecker.Schedule.env_var(), config)
+        case filename do
+          x when is_binary(x) ->
+            config = File.read!(filename)
+            System.put_env(ApiChecker.Schedule.env_var(), config)
 
-      _ ->
-        :ok
+          _ ->
+            :ok
+        end
     end
   end
 
