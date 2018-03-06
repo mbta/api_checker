@@ -43,7 +43,6 @@ defmodule ApiChecker.PeriodicTaskTest do
 
       assert task.name == "mbta-testing-01"
       assert task.url == "https://api-v3.mbta.com/predictions?filter%5Broute%5D=Red,Orange,Blue"
-      assert task.active == true
       assert task.frequency_in_seconds == 120
     end
 
@@ -55,7 +54,6 @@ defmodule ApiChecker.PeriodicTaskTest do
   @valid_periodic_task %PeriodicTask{
     name: "mbta-testing-01",
     url: "https://api-v3.mbta.com/predictions?filter%5Broute%5D=Red,Orange,Blue",
-    active: true,
     frequency_in_seconds: 120,
     checks: [
       %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]},
