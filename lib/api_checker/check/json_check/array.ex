@@ -28,5 +28,4 @@ defmodule ApiChecker.Check.JsonCheck.Array do
   def validate_not_empty(_) do
     {:error, :invalid_array}
   end
-
 end

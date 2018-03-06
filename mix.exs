@@ -7,7 +7,13 @@ defmodule ApiChecker.Mixfile do
       version: "0.1.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.html": :test,
+        "coveralls.json": :test
+      ]
     ]
   end
 
@@ -25,7 +31,8 @@ defmodule ApiChecker.Mixfile do
       {:jason, "~> 1.0"},
       {:timex, "~> 3.2"},
       {:httpoison, "~> 1.0"},
-      {:credo, "~> 0.9.0-rc1", only: [:dev], runtime: false}
+      {:credo, "~> 0.9.0-rc1", only: [:dev], runtime: false},
+      {:excoveralls, "~> 0.8", only: :test}
     ]
   end
 end
