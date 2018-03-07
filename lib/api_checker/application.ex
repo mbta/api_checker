@@ -19,14 +19,14 @@ defmodule ApiChecker.Application do
           _ -> nil
         end
 
-        case filename do
-          x when is_binary(x) ->
-            config = File.read!(filename)
-            System.put_env(ApiChecker.Schedule.env_var(), config)
+      case filename do
+        x when is_binary(x) ->
+          config = File.read!(filename)
+          System.put_env(ApiChecker.Schedule.env_var(), config)
 
-          _ ->
-            :ok
-        end
+        _ ->
+          :ok
+      end
     end
   end
 

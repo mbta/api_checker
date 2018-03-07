@@ -31,7 +31,7 @@ defmodule ApiChecker.Mixfile do
       {:jason, "~> 1.0"},
       {:timex, "~> 3.2"},
       {:httpoison, "~> 1.0"},
-      {:credo, "~> 0.9.0-rc1", only: [:dev], runtime: false},
+      {:credo, "~> 0.9.0-rc1", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.8", only: :test},
       {:distillery, "~> 1.4", runtime: false, only: :prod}
     ]
