@@ -125,7 +125,7 @@ JSON payload checks belong in an array on the `checks` field of a periodic task 
 
 A typical JSON payload check that checks a response for object's `"data"` field for an array that is not empty:
 
-```json 
+```json
 { "type": "json", "keypath": ["data"], "expects": "not_empty" }
 ```
 
@@ -163,19 +163,30 @@ Run every 2 minutes
 
 https://mbtace.slack.com/files/U32MH8RCK/F9F0HTF96/apicalls.json
 
-## Docker
+## Docker in Dev
 
 Build tagged container:
 
 `docker build -t api-checker:latest .`
 
-To demo this in Docker using dev config, run this command after building:
 
-`docker run -e "API_CHECKER_CONFIGURATION=$(cat ./priv/dev_checks_config.json)" api-checker:latest`
+To demo this in Docker using dev config and using the cookie `a_super_secret_cookie` run this command after building:
+
+Note: the `ERLANG_COOKIE` env var should be secret and secure in production as it allows connection to the running erlang cluster which allows execution of arbitrary code.
+
+`docker run -e "API_CHECKER_CONFIGURATION=$(cat ./priv/dev_checks_config.json)" -e "ERLANG_COOKIE=a_super_secret_cookie" api-checker:latest`
 
 To see the name of your container:
 
 `docker ps`
+
+To connect to a running container:
+
+`docker exec -it CONTAINER_NAME bash`
+
+To connect to a remote console:
+
+`docker exec -it CONTAINER_NAME rel/api_checker/bin/api_checker remote_console`
 
 To stop the container:
 
