@@ -10,7 +10,7 @@ use Mix.Releases.Config,
     # This sets the default release built by `mix release`
     default_release: :default,
     # This sets the default environment used by `mix release`
-    default_environment: :prod
+    default_environment: Mix.env()
 
 # For a full list of config options for both releases
 # and environments, visit https://hexdocs.pm/distillery/configuration.html
@@ -21,10 +21,12 @@ use Mix.Releases.Config,
 # when building in that environment, this combination of release
 # and environment configuration is called a profile
 
+IO.puts("Mix.env is #{Mix.env()}")
+
 environment :prod do
   set include_erts: true
   set include_src: false
-  set cookie: :"{ERLANG_COOKIE}"
+  set cookie: String.to_atom("${ERLANG_COOKIE}")
 end
 
 # You may define one or more releases in this file.
