@@ -15,6 +15,8 @@ ADD . .
 
 WORKDIR /root
 
+RUN /bin/sh priv/scripts/inject_erlang_cookie.sh
+
 RUN elixir --erl "-smp enable" /usr/local/bin/mix do deps.get --only prod, compile, release --verbose
 
 # Second stage: uses the built .tgz to get the files over

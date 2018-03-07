@@ -125,7 +125,7 @@ JSON payload checks belong in an array on the `checks` field of a periodic task 
 
 A typical JSON payload check that checks a response for object's `"data"` field for an array that is not empty:
 
-```json 
+```json
 { "type": "json", "keypath": ["data"], "expects": "not_empty" }
 ```
 
@@ -176,6 +176,14 @@ To demo this in Docker using dev config, run this command after building:
 To see the name of your container:
 
 `docker ps`
+
+To connect to a running container:
+
+`docker exec -it CONTAINER_NAME bash`
+
+To connect to a remote console:
+
+`docker exec -it CONTAINER_NAME rel/api_checker/bin/api_checker remote_console`
 
 To stop the container:
 
