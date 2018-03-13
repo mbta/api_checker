@@ -49,13 +49,34 @@ defmodule ApiChecker.TaskRunner do
 
     %{
       task: task,
-      previous_response: new_previous_response(status_code, body)
+      previous_response: new_previous_response(previous_response, status_code, body)
     }
   end
 
-  defp new_previous_response(status_code, body) do
+  defp new_previous_response(%PreviousResponse{} = previous_response, status_code, body) do
+    now = DateTime.utc_now()
+
+    modified_at =
+      if status_code in @allowed_status_codes and body != previous_response.body do
+        now
+      else
+        previous_response.modified_at
+      end
+
     %PreviousResponse{
-      updated_at: DateTime.utc_now(),
+      updated_at: now,
+      modified_at: modified_at,
+      status_code: status_code,
+      body: body
+    }
+  end
+
+  defp new_previous_response(nil, status_code, body) do
+    now = DateTime.utc_now()
+
+    %PreviousResponse{
+      updated_at: now,
+      modified_at: now,
       status_code: status_code,
       body: body
     }

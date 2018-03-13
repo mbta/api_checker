@@ -6,6 +6,7 @@ defmodule ApiChecker.PreviousResponse do
   use GenServer
 
   defstruct updated_at: nil,
+            modified_at: nil,
             body: nil,
             status_code: nil
 
