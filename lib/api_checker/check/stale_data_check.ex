@@ -46,18 +46,18 @@ defmodule ApiChecker.Check.StaleDataCheck do
   Diffs a time in the past with a given time (default: now) and compares the diff
   to a limit.
   """
-  def is_old_enough_to_be_stale?(limit, updated_at, check_time \\ DateTime.utc_now())
+  def is_old_enough_to_be_stale?(limit, modified_at, check_time \\ DateTime.utc_now())
 
   def is_old_enough_to_be_stale?(%__MODULE__{time_limit_in_seconds: limit}, previous_response, check_time) do
     is_old_enough_to_be_stale?(limit, previous_response, check_time)
   end
 
-  def is_old_enough_to_be_stale?(limit, %PreviousResponse{updated_at: updated_at}, check_time) do
-    is_old_enough_to_be_stale?(limit, updated_at, check_time)
+  def is_old_enough_to_be_stale?(limit, %PreviousResponse{modified_at: modified_at}, check_time) do
+    is_old_enough_to_be_stale?(limit, modified_at, check_time)
   end
 
-  def is_old_enough_to_be_stale?(limit, %DateTime{} = updated_at, %DateTime{} = check_time) when is_integer(limit) do
-    DateTime.diff(check_time, updated_at) >= limit
+  def is_old_enough_to_be_stale?(limit, %DateTime{} = modified_at, %DateTime{} = check_time) when is_integer(limit) do
+    DateTime.diff(check_time, modified_at) >= limit
   end
 
   def validate_struct(%__MODULE__{time_limit_in_seconds: limit}) when is_integer(limit) and limit > 0 do
