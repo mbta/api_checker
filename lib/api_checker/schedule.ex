@@ -64,7 +64,7 @@ defmodule ApiChecker.Schedule do
     end
   end
 
-  def invalid_config_shutdown() do
+  def invalid_config_shutdown do
     Logger.error(fn ->
       """
       ApiChecker Configuration Error

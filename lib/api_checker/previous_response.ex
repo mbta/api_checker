@@ -13,7 +13,7 @@ defmodule ApiChecker.PreviousResponse do
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
-  def get_all() do
+  def get_all do
     GenServer.call(__MODULE__, :get_all)
   end
 

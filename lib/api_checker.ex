@@ -4,11 +4,11 @@ defmodule ApiChecker do
   """
   alias ApiChecker.{PeriodicTask, Schedule, PreviousResponse}
 
-  def get_tasks!() do
+  def get_tasks! do
     Schedule.get_tasks!()
   end
 
-  def get_previous_responses() do
+  def get_previous_responses do
     PreviousResponse.get_all()
   end
 

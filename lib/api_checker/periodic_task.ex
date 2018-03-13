@@ -4,7 +4,7 @@ defmodule ApiChecker.PeriodicTask do
   a PeriodicTask with the intention of configuring a worker process.
   """
   alias ApiChecker.{PeriodicTask, Check}
-  alias ApiChecker.PeriodicTask.{WeeklyTimeRange, Times}
+  alias ApiChecker.PeriodicTask.{WeeklyTimeRange, Times, Validator}
 
   defstruct frequency_in_seconds: nil,
             time_ranges: [],
@@ -40,7 +40,7 @@ defmodule ApiChecker.PeriodicTask do
   end
 
   def validate(%PeriodicTask{} = task) do
-    PeriodicTask.Validator.validate(task)
+    Validator.validate(task)
   end
 
   defp parse_checks(json) when is_list(json) do

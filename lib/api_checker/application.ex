@@ -2,6 +2,7 @@ defmodule ApiChecker.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
+  alias ApiChecker.Schedule
 
   use Application
 
@@ -9,7 +10,7 @@ defmodule ApiChecker.Application do
   Automatically sets up config env var
   """
   def load_env_vars_from_file do
-    config = System.get_env(ApiChecker.Schedule.env_var())
+    config = System.get_env(Schedule.env_var())
 
     if Code.ensure_loaded?(Mix) do
       filename =
@@ -22,7 +23,7 @@ defmodule ApiChecker.Application do
       case filename do
         x when is_binary(x) ->
           config = File.read!(filename)
-          System.put_env(ApiChecker.Schedule.env_var(), config)
+          System.put_env(Schedule.env_var(), config)
 
         _ ->
           :ok
