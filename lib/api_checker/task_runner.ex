@@ -117,19 +117,26 @@ defmodule ApiChecker.TaskRunner do
   end
 
   def run_check(check, %Params{} = params) do
-    case Check.run_check(check, params) do
-      :ok ->
-        Logger.info(fn -> "Check OK - task_name=#{inspect(params.name)} check=#{inspect(check)}" end)
-        :ok
+    check_result = Check.run_check(check, params)
+    _ = Logger.info(fn -> log_check_result(check_result, check, params) end)
+    :ok
+  end
 
-      {:error, reason} = err ->
-        Logger.info(fn ->
-          "Check Failure - task_name=#{inspect(params.name)} check=#{inspect(check)} reason=#{
-            reason |> to_string() |> inspect()
-          }"
-        end)
+  defp log_check_result(:ok, check, params) do
+    "Check OK - task_name=#{inspect(params.name)} check=#{inspect(check)}"
+  end
 
-        err
-    end
+  defp log_check_result({:ok, additional_data}, check, params) do
+    additional_log =
+      Enum.reduce(additional_data, "", fn {key, val}, acc ->
+        "#{acc} #{key}=#{val}"
+      end)
+
+    "Check OK - task_name=#{inspect(params.name)} check=#{inspect(check)}#{additional_log}"
+  end
+
+  defp log_check_result({:error, reason}, check, params) do
+    reason_str = reason |> to_string() |> inspect()
+    "Check Failure - task_name=#{inspect(params.name)} check=#{inspect(check)} reason=#{reason_str}"
   end
 end

@@ -32,6 +32,7 @@ defmodule ApiChecker.TaskRunnerTest do
       assert captured =~ ~s(Check OK)
       assert captured =~ ~s(task_name="mbta-testing-01")
       assert captured =~ ~s(%ApiChecker.Check.JsonCheck{expects: "not_empty", keypath: ["data"]})
+      assert captured =~ ~s(length=)
       assert captured =~ ~s(%ApiChecker.Check.JsonCheck{expects: "jsonapi", keypath: ["jsonapi"]})
     end
 
