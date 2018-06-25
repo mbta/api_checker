@@ -56,7 +56,7 @@ defmodule ApiChecker.TaskRunnerTest do
 
       task = %PeriodicTask{
         name: "hello-world-task",
-        url: "https://httpbin.org/base64/aGVsbG8gd29ybGQNCg",
+        url: "https://httpbin.org/base64/aGVsbG8gd29ybGQ=",
         checks: []
       }
 
