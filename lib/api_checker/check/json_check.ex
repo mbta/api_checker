@@ -20,7 +20,7 @@ defmodule ApiChecker.Check.JsonCheck do
       iex> {:ok, json_check} = JsonCheck.from_json(json_check_config)
       {:ok, %JsonCheck{keypath: ["data"], expects: "not_empty"}}
       iex> JsonCheck.run_check(json_check, params)
-      :ok
+      {:ok, length: 1}
   """
 
   alias ApiChecker.Check.{JsonCheck, Params}

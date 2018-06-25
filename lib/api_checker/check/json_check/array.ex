@@ -9,7 +9,7 @@ defmodule ApiChecker.Check.JsonCheck.Array do
   Returns {:error, :invalid_array} for a non-list.
 
   iex> Array.validate_not_empty(["ok"])
-  :ok
+  {:ok, length: 1}
 
   iex> Array.validate_not_empty([])
   {:error, :array_was_empty}
@@ -21,8 +21,8 @@ defmodule ApiChecker.Check.JsonCheck.Array do
     {:error, :array_was_empty}
   end
 
-  def validate_not_empty(list) when is_list(list) do
-    :ok
+  def validate_not_empty([_ | _] = list) do
+    {:ok, length: length(list)}
   end
 
   def validate_not_empty(_) do
