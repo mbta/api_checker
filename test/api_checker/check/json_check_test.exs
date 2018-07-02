@@ -41,5 +41,21 @@ defmodule ApiChecker.Check.JsonCheckTest do
       assert {:error, _} = JsonCheck.run_check(json_check, invalid_params1)
       assert {:error, _} = JsonCheck.run_check(json_check, invalid_params2)
     end
+
+    test "can handle expectations which are objects" do
+      valid_json = %{
+        "expects" => %{
+          "expectation" => "min_length",
+          "min_length" => 2
+        }
+      }
+
+      assert {:ok, json_check} = JsonCheck.from_json(valid_json)
+
+      valid_params = %Params{decoded_body: [1, 2]}
+      invalid_params = %Params{decoded_body: [1]}
+      assert {:ok, length: 2} = JsonCheck.run_check(json_check, valid_params)
+      assert {:error, _} = JsonCheck.run_check(json_check, invalid_params)
+    end
   end
 end

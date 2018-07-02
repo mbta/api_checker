@@ -52,7 +52,7 @@
         ],
         "checks": [
             { "type": "stale", "time_limit_in_seconds": 119 },
-            { "type": "json", "keypath": ["data"], "expects": "not_empty" }
+            { "type": "json", "keypath": ["data"], "expects": {"expectation": "min_length", "min_length": 15} }
         ]
     },
     {
