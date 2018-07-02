@@ -48,7 +48,7 @@ defmodule ApiChecker.Check.JsonCheck do
   iex> JsonCheck.expectation_exists?("not_empty")
   true
   """
-  def expectation_exists?(name) when is_list(name) when is_binary(name) do
+  def expectation_exists?(name) do
     case get_expectation_func(name) do
       {:ok, _} -> true
       _ -> false
@@ -74,6 +74,11 @@ defmodule ApiChecker.Check.JsonCheck do
   """
   def get_expectation_func("jsonapi"), do: {:ok, &Jsonapi.validate/1}
   def get_expectation_func("not_empty"), do: {:ok, &Array.validate_not_empty/1}
+
+  def get_expectation_func(%{"expectation" => "min_length", "min_length" => min_length})
+      when is_integer(min_length) and min_length > 0,
+      do: {:ok, &Array.validate_min_length(&1, min_length)}
+
   def get_expectation_func(_), do: {:error, :no_such_expectation}
 
   @doc """
