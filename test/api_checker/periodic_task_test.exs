@@ -56,7 +56,7 @@ defmodule ApiChecker.PeriodicTaskTest do
     url: "https://api-v3.mbta.com/predictions?filter%5Broute%5D=Red,Orange,Blue",
     frequency_in_seconds: 120,
     checks: [
-      %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]},
+      %JsonCheck{keypath: ["data"], expects: "not_empty"},
       %JsonCheck{keypath: ["jsonapi"], expects: "jsonapi"}
     ],
     time_ranges: [

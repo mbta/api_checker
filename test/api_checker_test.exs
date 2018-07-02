@@ -11,7 +11,7 @@ defmodule ApiCheckerTest do
     url: "https://api-v3.mbta.com/predictions?filter%5Broute%5D=Red,Orange,Blue",
     frequency_in_seconds: 120,
     checks: [
-      %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]}
+      %JsonCheck{keypath: ["data"], expects: "not_empty"}
     ],
     time_ranges: [
       %WeeklyTimeRange{day: "MON", start: ~T[06:30:00], stop: ~T[22:00:00]},
@@ -27,7 +27,7 @@ defmodule ApiCheckerTest do
     url: "http://realtime.mbta.com/developer/api/v2/vehiclesbyroutes?format=json&routes=1",
     frequency_in_seconds: 120,
     checks: [
-      %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]}
+      %JsonCheck{keypath: ["data"], expects: "not_empty"}
     ],
     time_ranges: [
       %WeeklyTimeRange{day: "SAT", start: ~T[06:30:00], stop: ~T[22:00:00]}
@@ -39,7 +39,7 @@ defmodule ApiCheckerTest do
     url: "http://realtime.mbta.com/developer/api/v2/vehicles",
     frequency_in_seconds: 120,
     checks: [
-      %JsonCheck{keypath: ["data"], expects: ["array", "not_empty"]}
+      %JsonCheck{keypath: ["data"], expects: "not_empty"}
     ],
     time_ranges: [
       %WeeklyTimeRange{day: "THU", start: ~T[06:30:00], stop: ~T[22:00:00]}
