@@ -136,7 +136,6 @@ defmodule ApiChecker.TaskRunner do
   end
 
   defp log_check_result({:error, reason}, check, params) do
-    reason_str = reason |> to_string() |> inspect()
-    "Check Failure - task_name=#{inspect(params.name)} check=#{inspect(check)} reason=#{reason_str}"
+    "Check Failure - task_name=#{inspect(params.name)} check=#{inspect(check)} reason=#{inspect(reason)}"
   end
 end
