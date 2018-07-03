@@ -1,77 +1,714 @@
-[{
-        "name": "api-v3-predictions-1",
-        "url": "https://api-v3.mbta.com/predictions?filter[route]=Red,Orange,Blue",
-        "active": true,
-        "frequency_in_seconds": 120,
-        "time_ranges": [
-            { "type": "weekly", "day": "SUN", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "MON", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "TUE", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "WED", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "THU", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "FRI", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "SAT", "start": "05:59", "stop": "23:59" }
+[
+  {
+    "name": "subway-predictions",
+    "url": "https://api-v3.mbta.com/predictions?filter[route]=Red,Orange,Blue,Green-B,Green-C,Green-D,Green-E,Mattapan",
+    "active": true,
+    "frequency_in_seconds": 120,
+    "time_ranges": [
+      {
+        "type": "weekly",
+        "day": "SUN",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "MON",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "TUE",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "WED",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "THU",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "FRI",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "SAT",
+        "start": "05:59",
+        "stop": "23:59"
+      }
+    ],
+    "checks": [
+      {
+        "type": "stale",
+        "time_limit_in_seconds": 300
+      },
+      {
+        "type": "json",
+        "keypath": [
+          "data"
         ],
-        "checks": [
-            { "type": "stale", "time_limit_in_seconds": 119 },
-            { "type": "json", "keypath": ["data"], "expects": "not_empty" }
-        ]
-    },
-    {
-        "name": "api-v3-vehicles-1",
-        "url": "https://api-v3.mbta.com/vehicles/?route=Red,Orange,Blue",
-        "active": true,
-        "frequency_in_seconds": 120,
-        "time_ranges": [
-            { "type": "weekly", "day": "SUN", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "MON", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "TUE", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "WED", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "THU", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "FRI", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "SAT", "start": "05:59", "stop": "23:59" }
+        "expects": {
+          "expectation": "min_length",
+          "min_length": 175
+        }
+      }
+    ]
+  },
+  {
+    "name": "subway-vehicles",
+    "url": "https://api-v3.mbta.com/vehicles/?filter[route]=Red,Orange,Blue,Green-B,Green-C,Green-D,Green-E,Mattapan&page[limit]=1&sort=-updated_at",
+    "active": true,
+    "frequency_in_seconds": 120,
+    "time_ranges": [
+      {
+        "type": "weekly",
+        "day": "SUN",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "MON",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "TUE",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "WED",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "THU",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "FRI",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "SAT",
+        "start": "05:59",
+        "stop": "23:59"
+      }
+    ],
+    "checks": [
+      {
+        "type": "stale",
+        "time_limit_in_seconds": 300
+      },
+      {
+        "type": "json",
+        "keypath": [
+          "data"
         ],
-        "checks": [
-            { "type": "stale", "time_limit_in_seconds": 119 },
-            { "type": "json", "keypath": ["data"], "expects": "not_empty" }
-        ]
-    },
-    {
-        "name": "api-v3-predictions-2",
-        "url": "https://api-v3.mbta.com/predictions?filter%5Broute%5D=CR-Fairmount,CR-Fitchburg,CR-Worcester,CR-Franklin,CR-Greenbush,CR-Haverhill,CR-Kingston,CR-Lowell,CR-Middleborough,CR-Needham,CR-Newburyport,CR-Providence,CR-Foxboro",
-        "active": true,
-        "frequency_in_seconds": 120,
-        "time_ranges": [
-            { "type": "weekly", "day": "SUN", "start": "06:59", "stop": "23:59" },
-            { "type": "weekly", "day": "MON", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "TUE", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "WED", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "THU", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "FRI", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "SAT", "start": "06:59", "stop": "23:59" }
+        "expects": "not_empty"
+      }
+    ]
+  },
+  {
+    "name": "commuter-rail-predictions",
+    "url": "https://api-v3.mbta.com/predictions?filter[route]=CR-Fairmount,CR-Fitchburg,CR-Worcester,CR-Franklin,CR-Greenbush,CR-Haverhill,CR-Kingston,CR-Lowell,CR-Middleborough,CR-Needham,CR-Newburyport,CR-Providence,CR-Foxboro&filter[stop_sequence]=3,4,5",
+    "active": true,
+    "frequency_in_seconds": 120,
+    "time_ranges": [
+      {
+        "type": "weekly",
+        "day": "SUN",
+        "start": "07:15",
+        "stop": "22:59"
+      },
+      {
+        "type": "weekly",
+        "day": "MON",
+        "start": "06:05",
+        "stop": "22:59"
+      },
+      {
+        "type": "weekly",
+        "day": "TUE",
+        "start": "06:05",
+        "stop": "22:59"
+      },
+      {
+        "type": "weekly",
+        "day": "WED",
+        "start": "06:05",
+        "stop": "22:59"
+      },
+      {
+        "type": "weekly",
+        "day": "THU",
+        "start": "06:05",
+        "stop": "22:59"
+      },
+      {
+        "type": "weekly",
+        "day": "FRI",
+        "start": "06:05",
+        "stop": "22:59"
+      },
+      {
+        "type": "weekly",
+        "day": "SAT",
+        "start": "07:15",
+        "stop": "22:59"
+      }
+    ],
+    "checks": [
+      {
+        "type": "stale",
+        "time_limit_in_seconds": 600
+      },
+      {
+        "type": "json",
+        "keypath": [
+          "data"
         ],
-        "checks": [
-            { "type": "stale", "time_limit_in_seconds": 119 },
-            { "type": "json", "keypath": ["data"], "expects": {"expectation": "min_length", "min_length": 15} }
-        ]
-    },
-    {
-        "name": "api-v3-predictions-3",
-        "url": "https://api-v3.mbta.com/predictions/?filter%5Broute%5D=1",
-        "active": true,
-        "frequency_in_seconds": 120,
-        "time_ranges": [
-            { "type": "weekly", "day": "SUN", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "MON", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "TUE", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "WED", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "THU", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "FRI", "start": "05:59", "stop": "23:59" },
-            { "type": "weekly", "day": "SAT", "start": "05:59", "stop": "23:59" }
+        "expects": {
+          "expectation": "min_length",
+          "min_length": 15
+        }
+      }
+    ]
+  },
+  {
+    "name": "commuter-rail-vehicles",
+    "url": "https://api-v3.mbta.com/vehicles?filter[route]=CR-Fairmount,CR-Fitchburg,CR-Worcester,CR-Franklin,CR-Greenbush,CR-Haverhill,CR-Kingston,CR-Lowell,CR-Middleborough,CR-Needham,CR-Newburyport,CR-Providence,CR-Foxboro&page[limit]=1&sort=-updated_at",
+    "active": true,
+    "frequency_in_seconds": 120,
+    "time_ranges": [
+      {
+        "type": "weekly",
+        "day": "SUN",
+        "start": "07:15",
+        "stop": "22:59"
+      },
+      {
+        "type": "weekly",
+        "day": "MON",
+        "start": "06:05",
+        "stop": "22:59"
+      },
+      {
+        "type": "weekly",
+        "day": "TUE",
+        "start": "06:05",
+        "stop": "22:59"
+      },
+      {
+        "type": "weekly",
+        "day": "WED",
+        "start": "06:05",
+        "stop": "22:59"
+      },
+      {
+        "type": "weekly",
+        "day": "THU",
+        "start": "06:05",
+        "stop": "22:59"
+      },
+      {
+        "type": "weekly",
+        "day": "FRI",
+        "start": "06:05",
+        "stop": "22:59"
+      },
+      {
+        "type": "weekly",
+        "day": "SAT",
+        "start": "07:15",
+        "stop": "22:59"
+      }
+    ],
+    "checks": [
+      {
+        "type": "stale",
+        "time_limit_in_seconds": 600
+      },
+      {
+        "type": "json",
+        "keypath": [
+          "data"
         ],
-        "checks": [
-            { "type": "stale", "time_limit_in_seconds": 119 },
-            { "type": "json", "keypath": ["data"], "expects": "not_empty" }
-        ]
-    }
+        "expects": "not_empty"
+      }
+    ]
+  },
+  {
+    "name": "commuter-rail-boarding-statuses",
+    "url": "https://mbta-gtfs-s3.s3.amazonaws.com/TripUpdates_enhanced.json",
+    "active": true,
+    "frequency_in_seconds": 120,
+    "time_ranges": [
+      {
+        "type": "weekly",
+        "day": "SUN",
+        "start": "07:15",
+        "stop": "22:59"
+      },
+      {
+        "type": "weekly",
+        "day": "MON",
+        "start": "06:05",
+        "stop": "22:59"
+      },
+      {
+        "type": "weekly",
+        "day": "TUE",
+        "start": "06:05",
+        "stop": "22:59"
+      },
+      {
+        "type": "weekly",
+        "day": "WED",
+        "start": "06:05",
+        "stop": "22:59"
+      },
+      {
+        "type": "weekly",
+        "day": "THU",
+        "start": "06:05",
+        "stop": "22:59"
+      },
+      {
+        "type": "weekly",
+        "day": "FRI",
+        "start": "06:05",
+        "stop": "22:59"
+      },
+      {
+        "type": "weekly",
+        "day": "SAT",
+        "start": "07:15",
+        "stop": "22:59"
+      }
+    ],
+    "checks": [
+      {
+        "type": "stale",
+        "time_limit_in_seconds": 600
+      },
+      {
+        "type": "json",
+        "keypath": [
+          "entity"
+        ],
+        "expects": {
+          "expectation": "min_length",
+          "min_length": 12
+        }
+      }
+    ]
+  },
+  {
+    "name": "bus-vehicles",
+    "url": "https://api-v3.mbta.com/vehicles/?filter[route]=1,39,71,116&page[limit]=1&sort=-updated_at",
+    "active": true,
+    "frequency_in_seconds": 120,
+    "time_ranges": [
+      {
+        "type": "weekly",
+        "day": "SUN",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "MON",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "TUE",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "WED",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "THU",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "FRI",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "SAT",
+        "start": "05:59",
+        "stop": "23:59"
+      }
+    ],
+    "checks": [
+      {
+        "type": "stale",
+        "time_limit_in_seconds": 300
+      },
+      {
+        "type": "json",
+        "keypath": [
+          "data"
+        ],
+        "expects": "not_empty"
+      }
+    ]
+  },
+  {
+    "name": "bus-predictions",
+    "url": "https://api-v3.mbta.com/predictions/?filter[route]=1,39,71,116",
+    "active": true,
+    "frequency_in_seconds": 120,
+    "time_ranges": [
+      {
+        "type": "weekly",
+        "day": "SUN",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "MON",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "TUE",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "WED",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "THU",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "FRI",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "SAT",
+        "start": "05:59",
+        "stop": "23:59"
+      }
+    ],
+    "checks": [
+      {
+        "type": "stale",
+        "time_limit_in_seconds": 300
+      },
+      {
+        "type": "json",
+        "keypath": [
+          "data"
+        ],
+        "expects": {
+          "expectation": "min_length",
+          "min_length": 350
+        }
+      }
+    ]
+  },
+  {
+    "name": "winthrop-predictions-weekday",
+    "url": "https://api-v3.mbta.com/predictions?filter[route]=712,713",
+    "active": true,
+    "frequency_in_seconds": 120,
+    "time_ranges": [
+      {
+        "type": "weekly",
+        "day": "MON",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "TUE",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "WED",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "THU",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "FRI",
+        "start": "05:59",
+        "stop": "23:59"
+      }
+    ],
+    "checks": [
+      {
+        "type": "stale",
+        "time_limit_in_seconds": 900
+      }
+    ]
+  },
+  {
+    "name": "winthrop-predictions-weekend",
+    "url": "https://api-v3.mbta.com/predictions?filter[route]=712,713",
+    "active": true,
+    "frequency_in_seconds": 120,
+    "time_ranges": [
+      {
+        "type": "weekly",
+        "day": "SUN",
+        "start": "08:00",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "SAT",
+        "start": "08:00",
+        "stop": "23:59"
+      }
+    ],
+    "checks": [
+      {
+        "type": "stale",
+        "time_limit_in_seconds": 2700
+      }
+    ]
+  },
+  {
+    "name": "winthrop-vehicles-weekday",
+    "url": "https://api-v3.mbta.com/vehicles?filter[route]=712,713&page[limit]=1&sort=-updated_at",
+    "active": true,
+    "frequency_in_seconds": 120,
+    "time_ranges": [
+      {
+        "type": "weekly",
+        "day": "MON",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "TUE",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "WED",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "THU",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "FRI",
+        "start": "05:59",
+        "stop": "23:59"
+      }
+    ],
+    "checks": [
+      {
+        "type": "stale",
+        "time_limit_in_seconds": 900
+      }
+    ]
+  },
+  {
+    "name": "winthrop-vehicles-weekend",
+    "url": "https://api-v3.mbta.com/vehicles?filter[route]=712,713",
+    "active": true,
+    "frequency_in_seconds": 120,
+    "time_ranges": [
+      {
+        "type": "weekly",
+        "day": "SUN",
+        "start": "08:00",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "SAT",
+        "start": "08:00",
+        "stop": "23:59"
+      }
+    ],
+    "checks": [
+      {
+        "type": "stale",
+        "time_limit_in_seconds": 2700
+      }
+    ]
+  },
+  {
+    "name": "red-line-shuttle-vehicles",
+    "url": "https://api-v3.mbta.com/vehicles?filter[route]=Shuttle002,Shuttle005&page[limit]=1&sort=-updated_at",
+    "active": true,
+    "frequency_in_seconds": 120,
+    "time_ranges": [
+      {
+        "type": "weekly",
+        "day": "SUN",
+        "start": "06:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "MON",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "TUE",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "WED",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "THU",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "FRI",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "SAT",
+        "start": "06:59",
+        "stop": "23:59"
+      }
+    ],
+    "checks": [
+      {
+        "type": "stale",
+        "time_limit_in_seconds": 900
+      }
+    ]
+  },
+  {
+    "name": "alerts",
+    "url": "https://api-v3.mbta.com/alerts?page[limit]=1&sort=-updated_at",
+    "active": true,
+    "frequency_in_seconds": 120,
+    "time_ranges": [
+      {
+        "type": "weekly",
+        "day": "SUN",
+        "start": "08:01",
+        "stop": "21:30"
+      },
+      {
+        "type": "weekly",
+        "day": "MON",
+        "start": "08:01",
+        "stop": "21:30"
+      },
+      {
+        "type": "weekly",
+        "day": "TUE",
+        "start": "08:01",
+        "stop": "21:30"
+      },
+      {
+        "type": "weekly",
+        "day": "WED",
+        "start": "08:01",
+        "stop": "21:30"
+      },
+      {
+        "type": "weekly",
+        "day": "THU",
+        "start": "08:01",
+        "stop": "21:30"
+      },
+      {
+        "type": "weekly",
+        "day": "FRI",
+        "start": "08:01",
+        "stop": "21:30"
+      },
+      {
+        "type": "weekly",
+        "day": "SAT",
+        "start": "08:01",
+        "stop": "21:30"
+      }
+    ],
+    "checks": [
+      {
+        "type": "stale",
+        "time_limit_in_seconds": 64800
+      },
+      {
+        "type": "json",
+        "keypath": [
+          "data"
+        ],
+        "expects": "not_empty"
+      }
+    ]
+  }
 ]
