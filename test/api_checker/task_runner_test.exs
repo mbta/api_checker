@@ -17,7 +17,8 @@ defmodule ApiChecker.TaskRunnerTest do
     name: "failure-task",
     url: "https://api-v3.mbta.com/predictions?filter%5Broute%5D=Red,Orange,Blue",
     checks: [
-      %JsonCheck{keypath: ["unexpected"], expects: "not_empty"}
+      %JsonCheck{keypath: ["unexpected"], expects: "not_empty"},
+      %JsonCheck{keypath: ["data"], expects: %{"expectation" => "min_length", "min_length" => 20_000}}
     ]
   }
 
@@ -42,6 +43,8 @@ defmodule ApiChecker.TaskRunnerTest do
       assert captured =~ ~s(task_name="failure-task")
       assert captured =~ ~s(%ApiChecker.Check.JsonCheck{expects: "not_empty", keypath: ["unexpected"]})
       assert captured =~ ~s(reason=:invalid_array)
+      assert captured =~ ~s(length=)
+      assert captured =~ ~s(reason=:array_too_small)
     end
 
     @tag :capture_log

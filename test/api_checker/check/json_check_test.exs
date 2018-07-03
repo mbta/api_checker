@@ -55,7 +55,7 @@ defmodule ApiChecker.Check.JsonCheckTest do
       valid_params = %Params{decoded_body: [1, 2]}
       invalid_params = %Params{decoded_body: [1]}
       assert {:ok, length: 2} = JsonCheck.run_check(json_check, valid_params)
-      assert {:error, _} = JsonCheck.run_check(json_check, invalid_params)
+      assert {:error, _, _} = JsonCheck.run_check(json_check, invalid_params)
     end
   end
 end

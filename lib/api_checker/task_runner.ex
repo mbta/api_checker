@@ -127,15 +127,22 @@ defmodule ApiChecker.TaskRunner do
   end
 
   defp log_check_result({:ok, additional_data}, check, params) do
-    additional_log =
-      Enum.reduce(additional_data, "", fn {key, val}, acc ->
-        "#{acc} #{key}=#{val}"
-      end)
-
-    "Check OK - task_name=#{inspect(params.name)} check=#{inspect(check)}#{additional_log}"
+    "Check OK - task_name=#{inspect(params.name)} check=#{inspect(check)}#{additional_log(additional_data)}"
   end
 
   defp log_check_result({:error, reason}, check, params) do
     "Check Failure - task_name=#{inspect(params.name)} check=#{inspect(check)} reason=#{inspect(reason)}"
+  end
+
+  defp log_check_result({:error, reason, additional_data}, check, params) do
+    "Check Failure - task_name=#{inspect(params.name)} check=#{inspect(check)} reason=#{inspect(reason)}#{
+      additional_log(additional_data)
+    }"
+  end
+
+  defp additional_log(additional_data) do
+    Enum.reduce(additional_data, "", fn {key, val}, acc ->
+      "#{acc} #{key}=#{val}"
+    end)
   end
 end
