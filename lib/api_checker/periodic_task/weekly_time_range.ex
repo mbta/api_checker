@@ -6,6 +6,7 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRange do
   the time left of the dash is before the time on the right.
   """
   alias ApiChecker.PeriodicTask.{WeeklyTimeRange, Days, Times}
+  alias ApiChecker.Holiday
 
   defstruct start: nil,
             stop: nil,
@@ -212,11 +213,22 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRange do
     day = Days.name_of_day(datetime)
     # ~T[06:00:00]
     time = DateTime.to_time(datetime)
-    intersects?(range, day, time)
+
+    with true <- occurs_on_holiday?(range.holiday, datetime),
+         true <- occurs_on_day?(range, day),
+         true <- is_at_or_after_start?(range, time),
+         true <- is_at_or_before_stop?(range, time) do
+      true
+    end
   end
 
-  def intersects?(%WeeklyTimeRange{} = range, day, %Time{} = time) do
-    occurs_on_day?(range, day) && is_at_or_after_start?(range, time) && is_at_or_before_stop?(range, time)
+  defp occurs_on_holiday?(:both, _) do
+    true
+  end
+
+  defp occurs_on_holiday?(expected_holiday?, dt) do
+    date = DateTime.to_date(dt)
+    Holiday.is_holiday?(date) == expected_holiday?
   end
 
   @doc """
