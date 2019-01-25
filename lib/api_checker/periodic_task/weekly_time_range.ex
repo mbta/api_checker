@@ -9,7 +9,8 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRange do
 
   defstruct start: nil,
             stop: nil,
-            day: nil
+            day: nil,
+            holiday: :both
 
   @doc """
   Parses a valid time range string into a valid WeeklyTimeRange struct.
@@ -26,7 +27,8 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRange do
          {:ok, day} <- Map.fetch(json, "day"),
          {:ok, start} <- parse_time(raw_start),
          {:ok, stop} <- parse_time(raw_stop),
-         time_range <- %WeeklyTimeRange{start: start, stop: stop, day: day},
+         {:ok, holiday} <- parse_holiday(json),
+         time_range = %WeeklyTimeRange{start: start, stop: stop, day: day, holiday: holiday},
          :ok <- validate(time_range) do
       {:ok, time_range}
     else
@@ -89,6 +91,34 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRange do
         # all errors become :invalid_time_format reasons
         {:error, :invalid_time_format}
     end
+  end
+
+  @doc """
+  Parse the holiday value.
+
+  If not present, assume valid for both holiday and not holiday dates.
+
+  iex> WeeklyTimeRange.parse_holiday(%{})
+  {:ok, :both}
+
+  iex> WeeklyTimeRange.parse_holiday(%{"holiday" => false})
+  {:ok, false}
+
+  iex> WeeklyTimeRange.parse_holiday(%{"holiday" => "other"})
+  {:error, :invalid_holiday}
+  """
+  def parse_holiday(map)
+
+  def parse_holiday(%{"holiday" => holiday}) when is_boolean(holiday) do
+    {:ok, holiday}
+  end
+
+  def parse_holiday(%{"holiday" => _}) do
+    {:error, :invalid_holiday}
+  end
+
+  def parse_holiday(%{}) do
+    {:ok, :both}
   end
 
   @doc """
