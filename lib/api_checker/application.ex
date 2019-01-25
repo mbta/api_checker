@@ -38,6 +38,7 @@ defmodule ApiChecker.Application do
       # Starts a worker by calling: ApiChecker.Worker.start_link(arg)
       # {ApiChecker.Worker, arg},
       # {ApiChecker.Schedule, nil},
+      {ApiChecker.Holiday, name: ApiChecker.Holiday},
       {ApiChecker.PreviousResponse, nil},
       {ApiChecker.Scheduler, nil}
     ]
