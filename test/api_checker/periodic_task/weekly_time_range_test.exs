@@ -18,6 +18,17 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRangeTest do
   @thursday_10pm datetime("2018-03-01T22:00:00-0500")
   @thursday_11pm datetime("2018-03-01T23:00:00-0500")
 
+  @holiday datetime("2019-02-18T12:00:00-0500")
+  # should be the next week
+  @non_holiday datetime("2019-02-25T12:00:00-0500")
+  @holiday_dow "MON"
+  @holiday_range %WeeklyTimeRange{
+    start: ~T[00:00:00],
+    stop: ~T[23:59:59],
+    day: @holiday_dow,
+    holiday: true
+  }
+
   describe "intersects?/1" do
     test "returns true when a datetime is in range" do
       datetime = @thursday_12pm
@@ -55,6 +66,17 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRangeTest do
       assert PeriodicTask.Days.name_of_day(datetime) == "THU"
       assert @thursday_6am_to_10pm.stop == DateTime.to_time(datetime)
       assert WeeklyTimeRange.intersects?(@thursday_6am_to_10pm, datetime)
+    end
+
+    test "respects the holiday configuration when holiday: true" do
+      assert WeeklyTimeRange.intersects?(@holiday_range, @holiday)
+      refute WeeklyTimeRange.intersects?(@holiday_range, @non_holiday)
+    end
+
+    test "respects the holiday configuration when holiday: false" do
+      non_holiday_range = %{@holiday_range | holiday: false}
+      refute WeeklyTimeRange.intersects?(non_holiday_range, @holiday)
+      assert WeeklyTimeRange.intersects?(non_holiday_range, @non_holiday)
     end
   end
 end
