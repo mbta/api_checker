@@ -4,6 +4,8 @@ defmodule ApiChecker.Holiday do
   """
   use GenServer
 
+  @api_url "https://api-v3.mbta.com/services/?filter[route]=Red,1&fields[service]=added_dates,added_dates_notes,removed_dates,removed_dates_notes"
+
   defstruct holidays: %{}
 
   def start_link(start_link_args \\ []) do
@@ -11,7 +13,7 @@ defmodule ApiChecker.Holiday do
   end
 
   def is_holiday?(pid \\ __MODULE__, %Date{} = d) do
-    GenServer.call(pid, {:is_holiday?, d})
+    GenServer.call(pid, {:is_holiday?, Date.to_iso8601(d)})
   end
 
   # Server functions
@@ -19,44 +21,36 @@ defmodule ApiChecker.Holiday do
     {:ok, %__MODULE__{}}
   end
 
-  def handle_call({:is_holiday?, d}, _from, %{holidays: holidays} = state) do
-    {state, is_holiday?} =
-      case Map.fetch(holidays, d) do
-        {:ok, is_holiday?} ->
-          {state, is_holiday?}
-
-        :error ->
-          {:ok, is_holiday?} = is_holiday_api(d)
-          {put_in(state.holidays[d], is_holiday?), is_holiday?}
+  def handle_call({:is_holiday?, iso_date}, _from, %{holidays: holidays} = state) when is_binary(iso_date) do
+    state =
+      if Map.has_key?(holidays, iso_date) do
+        state
+      else
+        {:ok, new_holidays} = fetch_holidays()
+        new_holidays = Map.put_new(new_holidays, iso_date, false)
+        %{state | holidays: Map.merge(holidays, new_holidays)}
       end
 
-    {:reply, is_holiday?, state}
+    {:reply, Map.get(state.holidays, iso_date, false), state}
   end
 
-  defp is_holiday_api(d) do
-    iso_date = Date.to_iso8601(d)
-
-    with {:ok, %{status_code: 200, body: body}} <- HTTPoison.get(is_holiday_api_url(iso_date)),
-         {:ok, json} <- Jason.decode(body) do
-      [%{"attributes" => service} | _] = json["included"]
-      dates = service["added_dates"] ++ service["removed_dates"]
-      notes = service["added_dates_notes"] ++ service["removed_dates_notes"]
-      combined = Enum.zip(dates, notes)
-
-      case Enum.find(combined, &(elem(&1, 0) == iso_date)) do
-        {^iso_date, nil} ->
-          {:ok, false}
-
-        {^iso_date, _} ->
-          {:ok, true}
-
-        nil ->
-          {:ok, false}
-      end
+  def fetch_holidays do
+    with {:ok, %{status_code: 200, body: body}} <- HTTPoison.get(@api_url),
+         {:ok, json} <- Jason.decode(body),
+         {:ok, data} <- Map.fetch(json, "data") do
+      {:ok, parse_service_dates(data)}
     end
   end
 
-  defp is_holiday_api_url(iso_date) do
-    "https://api-v3.mbta.com/trips/?filter[route]=Red&filter[date]=#{iso_date}&include=service&page[limit]=1&fields[trip]=&fields[service]=added_dates,added_dates_notes,removed_dates,removed_dates_notes"
+  def parse_service_dates(data) do
+    for %{"type" => "service"} = service <- data,
+        attributes = Map.get(service, "attributes"),
+        dates = Map.get(attributes, "added_dates", []) ++ Map.get(attributes, "removed_dates", []),
+        notes = Map.get(attributes, "added_dates_notes", []) ++ Map.get(attributes, "removed_dates_notes", []),
+        {iso_date, note} <- Enum.zip(dates, notes),
+        into: %{} do
+      is_holiday? = not is_nil(note)
+      {iso_date, is_holiday?}
+    end
   end
 end
