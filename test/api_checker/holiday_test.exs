@@ -1,10 +1,10 @@
 defmodule ApiChecker.HolidayTest do
   @moduledoc false
-  use ExUnit.Case, async: true
+  use ExUnit.Case
   import ApiChecker.Holiday
 
-  @holiday_date ~D[2019-05-27]
-  @regular_date ~D[2019-05-28]
+  @holiday_date ~D[2019-11-28]
+  @regular_date ~D[2019-11-29]
 
   describe "is_holiday?/1" do
     test "returns true for holidays" do
