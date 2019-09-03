@@ -3,6 +3,7 @@ defmodule ApiChecker.Holiday do
   Maintains a list of the current holidays.
   """
   use GenServer
+  require Logger
 
   @api_url "https://api-v3.mbta.com/services/?filter[route]=Red,1&fields[service]=added_dates,added_dates_notes,removed_dates,removed_dates_notes"
 
@@ -27,6 +28,11 @@ defmodule ApiChecker.Holiday do
         state
       else
         {:ok, new_holidays} = fetch_holidays()
+
+        Logger.info(fn ->
+          ["Found holidays: ", inspect(Map.keys(new_holidays))]
+        end)
+
         new_holidays = Map.put_new(new_holidays, iso_date, false)
         %{state | holidays: Map.merge(holidays, new_holidays)}
       end
@@ -48,9 +54,9 @@ defmodule ApiChecker.Holiday do
         dates = Map.get(attributes, "added_dates", []) ++ Map.get(attributes, "removed_dates", []),
         notes = Map.get(attributes, "added_dates_notes", []) ++ Map.get(attributes, "removed_dates_notes", []),
         {iso_date, note} <- Enum.zip(dates, notes),
+        not is_nil(note),
         into: %{} do
-      is_holiday? = not is_nil(note)
-      {iso_date, is_holiday?}
+      {iso_date, true}
     end
   end
 end
