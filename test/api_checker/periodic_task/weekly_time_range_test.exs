@@ -18,10 +18,10 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRangeTest do
   @thursday_10pm datetime("2018-03-01T22:00:00-0500")
   @thursday_11pm datetime("2018-03-01T23:00:00-0500")
 
-  @holiday datetime("2019-11-28T12:00:00-0500")
+  @holiday datetime("2020-01-20T12:00:00-0500")
   # should be the next week
-  @non_holiday datetime("2019-11-21T12:00:00-0500")
-  @holiday_dow "THU"
+  @non_holiday datetime("2020-01-13T12:00:00-0500")
+  @holiday_dow "MON"
   @holiday_range %WeeklyTimeRange{
     start: ~T[00:00:00],
     stop: ~T[23:59:59],

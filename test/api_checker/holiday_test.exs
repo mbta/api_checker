@@ -3,7 +3,7 @@ defmodule ApiChecker.HolidayTest do
   use ExUnit.Case
   import ApiChecker.Holiday
 
-  @holiday_date ~D[2019-11-28]
+  @holiday_date ~D[2020-01-20]
   @regular_date ~D[2019-11-29]
 
   describe "is_holiday?/1" do
