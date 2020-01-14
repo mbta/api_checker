@@ -3,7 +3,7 @@
 [![Build Status](https://semaphoreci.com/api/v1/mbta/api-checker/branches/master/badge.svg)](https://semaphoreci.com/mbta/api-checker)
 [![codecov](https://codecov.io/gh/mbta/api-checker/branch/master/graph/badge.svg)](https://codecov.io/gh/mbta/api-checker)
 
-An API checker that runs periodically and logs an error when and API's HTTP response is invalid.
+An API checker that runs periodically and logs an error when an API's HTTP response is invalid.
 
 ## Architecture
 
