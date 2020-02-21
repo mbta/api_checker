@@ -22,6 +22,10 @@ defmodule ApiChecker.PeriodicTask do
     end
   end
 
+  defp do_from_json(%{"active" => false}) do
+    {:error, :ignored}
+  end
+
   defp do_from_json(json) do
     with time_ranges when is_list(time_ranges) <- parse_time_ranges(json["time_ranges"]),
          checks when is_list(checks) <- parse_checks(json["checks"]) do

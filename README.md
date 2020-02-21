@@ -72,7 +72,7 @@ The `name` field is a unique identifier for a task. The `name` is the `task_name
 
 The `url` field is the url that will be checked for correct response JSON and/or stale data and must begin with `"http"` or `"https"`.
 
-The `active` field is currently unused.
+The `active` field, if set to false, will ignore that check.
 
 The `frequency_in_seconds` is the minimum desired frequency to run a check.
 

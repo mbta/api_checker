@@ -49,6 +49,11 @@ defmodule ApiChecker.PeriodicTaskTest do
     test "errors for invalid json" do
       assert {:error, _} = @valid_periodic_task_json |> Map.drop(["checks"]) |> PeriodicTask.from_json()
     end
+
+    test "errors for ignored json" do
+      ignored = Map.put(@valid_periodic_task_json, "active", false)
+      assert {:error, :ignored} = PeriodicTask.from_json(ignored)
+    end
   end
 
   @valid_periodic_task %PeriodicTask{
