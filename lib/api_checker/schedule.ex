@@ -47,13 +47,16 @@ defmodule ApiChecker.Schedule do
   defp to_periodic_tasks!(checks) do
     checks
     |> Enum.with_index()
-    |> Enum.map(fn {check, index} -> periodic_task_from_json_config!(check, index) end)
+    |> Enum.flat_map(fn {check, index} -> periodic_task_from_json_config!(check, index) end)
   end
 
   defp periodic_task_from_json_config!(config, index) do
     case PeriodicTask.from_json(config) do
       {:ok, periodic_task} ->
-        periodic_task
+        [periodic_task]
+
+      {:error, :ignored} ->
+        []
 
       {:error, _} ->
         Logger.error(fn ->
