@@ -1,4 +1,4 @@
-FROM elixir:1.6-alpine as builder
+FROM elixir:1.10-alpine as builder
 
 WORKDIR /root
 
@@ -16,12 +16,12 @@ ADD . .
 WORKDIR /root
 
 # Generates a compiled prod release using distillery.
-RUN elixir --erl "-smp enable" /usr/local/bin/mix do deps.get --only prod, compile, release --verbose
+RUN elixir --erl "-smp enable" /usr/local/bin/mix do deps.get --only prod, compile, distillery.release --verbose
 
 # Second stage: uses the built .tgz to get the files over
-FROM alpine:latest
+FROM alpine:3.11
 
-RUN apk add --update libssl1.0 ncurses-libs bash \
+RUN apk add --update libssl1.1 ncurses-libs bash \
 	&& rm -rf /var/cache/apk
 
 # Set environment
@@ -33,5 +33,8 @@ COPY --from=builder /root/_build/prod/rel /root/rel
 
 # Set default API checker configuration
 ENV API_CHECKER_CONFIGURATION=[]
+
+# Ensure SSL support is enabled
+RUN /root/rel/api_checker/bin/api_checker eval ":crypto.supports()"
 
 CMD ["/root/rel/api_checker/bin/api_checker", "foreground"]
