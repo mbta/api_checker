@@ -100,6 +100,7 @@ The `start` field is the start time for a check on the accompanying day; tasks w
 
 The `stop` field is the stop time for a check on the accompanying day; tasks will not run after the stop time of that day. Valid values are strings of military times between `"00:00"` and `"23:59"`. Note the `stop_time` must be temporally after the `start_time`.
 
+The `holiday` field (optional) is a boolean, indicating whether the date should (true) or should not (false) be a holiday. If the key field is not present, both holidays and non holidays will match.
 
 ### Stale Data Check Configuration
 
