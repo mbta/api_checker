@@ -36,7 +36,6 @@ ApiChecker checks are run via a well defined and strict json configuration.
 A perodic task is configured by placing a json `array` of valid periodic task JSON objects in one of three files. Each file is loaded upon startup in `dev`, `test`, and `prod` environments, respectively:
 
 - `./priv/dev_checks_config.json`
-
 - `./priv/test_checks_config.json`
 
 #### In AWS (for production)
