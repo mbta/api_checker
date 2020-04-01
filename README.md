@@ -56,6 +56,12 @@ In production api-checker runs in Amazon ECS and the configuration lives there. 
 1. Under `Container Definitions` click the `api-checker` container name
 1. Under the `Environment` section, enter your updated value for the `API_CHECKER_CONFIGURATION` key
 1. Click `Update`
+1. At the bottom of the `Create new revision of Task Definition` page click `Create`
+1. Go to the [`api-checker-prod` Service page](https://console.aws.amazon.com/ecs/home?region=us-east-1#/clusters/api-checker/services/api-checker-prod/details)
+1. Click `Update`
+1. Select the latest `Revision` you just created (you might have to scroll up in the options list)
+1. Click `Skip to review`
+1. Click `Update Service`
 
 ### Periodic Task JSON Object
 
