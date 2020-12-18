@@ -3,8 +3,8 @@ defmodule ApiChecker.Check.StaleDataCheck do
   Run stale data checks against previous requests.
   """
 
-  alias ApiChecker.PreviousResponse
   alias ApiChecker.Check.Params
+  alias ApiChecker.PreviousResponse
 
   defstruct time_limit_in_seconds: nil
 

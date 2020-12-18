@@ -1,7 +1,7 @@
 defmodule ApiChecker.TaskRunnerTest do
   use ExUnit.Case, async: true
-  alias ApiChecker.{TaskRunner, PeriodicTask, PreviousResponse}
   alias ApiChecker.Check.JsonCheck
+  alias ApiChecker.{PeriodicTask, PreviousResponse, TaskRunner}
   import ExUnit.CaptureLog
 
   @valid_periodic_task %PeriodicTask{

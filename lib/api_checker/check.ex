@@ -2,7 +2,7 @@ defmodule ApiChecker.Check do
   @moduledoc """
   Context for running configurable "checks".
   """
-  alias ApiChecker.Check.{StaleDataCheck, JsonCheck}
+  alias ApiChecker.Check.{JsonCheck, StaleDataCheck}
 
   def from_json(%{"type" => "json"} = json) do
     JsonCheck.from_json(json)

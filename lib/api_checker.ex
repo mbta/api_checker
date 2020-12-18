@@ -2,7 +2,7 @@ defmodule ApiChecker do
   @moduledoc """
   Documentation for ApiChecker.
   """
-  alias ApiChecker.{PeriodicTask, Schedule, PreviousResponse}
+  alias ApiChecker.{PeriodicTask, PreviousResponse, Schedule}
 
   def get_tasks! do
     Schedule.get_tasks!()

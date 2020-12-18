@@ -20,7 +20,7 @@ defmodule ApiChecker.Check.JsonCheck do
   """
 
   alias ApiChecker.Check.{JsonCheck, Params}
-  alias JsonCheck.{Jsonapi, Array}
+  alias JsonCheck.{Array, Jsonapi}
 
   defstruct keypath: [],
             # params: nil, # keep this here for the future -JLG
@@ -85,17 +85,15 @@ defmodule ApiChecker.Check.JsonCheck do
   Turns valid json into a ready-to-use JsonCheck struct.
   """
   def from_json(json) when is_map(json) do
-    with {:ok, expectation_name} <- Map.fetch(json, "expects") do
-      {:ok,
-       %JsonCheck{
-         keypath: json |> Map.get("keypath") |> List.wrap(),
-         expects: expectation_name
-       }}
-    else
-      {:error, _} = err ->
-        err
+    case Map.fetch(json, "expects") do
+      {:ok, expectation_name} ->
+        {:ok,
+         %JsonCheck{
+           keypath: json |> Map.get("keypath") |> List.wrap(),
+           expects: expectation_name
+         }}
 
-      _ ->
+      :error ->
         {:error, :invalid_json_check_config}
     end
   end

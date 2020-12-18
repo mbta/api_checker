@@ -1,7 +1,7 @@
 defmodule ApiChecker.Check.JsonCheckTest do
   use ExUnit.Case, async: true
   alias ApiChecker.Check.{JsonCheck, Params}
-  alias JsonCheck.{Jsonapi, Array}
+  alias JsonCheck.{Array, Jsonapi}
   doctest JsonCheck
 
   describe "from_json/1" do
