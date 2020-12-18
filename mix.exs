@@ -31,7 +31,8 @@ defmodule ApiChecker.Mixfile do
       {:jason, "~> 1.0"},
       {:timex, "~> 3.2"},
       {:httpoison, "~> 1.0"},
-      {:credo, "~> 0.9.0-rc1", only: [:dev, :test], runtime: false},
+      {:hackney, github: "benoitc/hackney", branch: "master", override: true},
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.8", only: :test, runtime: false},
       {:distillery, "~> 2.0", only: :prod, runtime: false}
     ]
