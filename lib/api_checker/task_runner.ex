@@ -4,8 +4,7 @@ defmodule ApiChecker.TaskRunner do
   represented by `ApiChecker.PeriodicTask` structs.
   """
   require Logger
-  alias ApiChecker.{PeriodicTask, PreviousResponse, Check}
-  alias ApiChecker.Check.Params
+  alias ApiChecker.{Check, Check.Params, PeriodicTask, PreviousResponse}
 
   @doc """
   Runs tasks and updates `PreviousResponse` state with task results.

@@ -1,7 +1,7 @@
 defmodule ApiChecker.Check.StaleDataCheckTest do
   @moduledoc false
   use ExUnit.Case, async: true
-  alias ApiChecker.Check.{StaleDataCheck, Params}
+  alias ApiChecker.Check.{Params, StaleDataCheck}
   alias ApiChecker.PreviousResponse
   import ApiChecker.TestHelpers
 

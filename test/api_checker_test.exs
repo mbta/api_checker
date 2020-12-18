@@ -1,8 +1,8 @@
 defmodule ApiCheckerTest do
   use ExUnit.Case, async: true
+  alias ApiChecker.Check.JsonCheck
   alias ApiChecker.PeriodicTask.WeeklyTimeRange
   alias ApiChecker.{PeriodicTask, PreviousResponse}
-  alias ApiChecker.Check.JsonCheck
   import ApiChecker.TestHelpers
   doctest ApiChecker
 

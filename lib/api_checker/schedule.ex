@@ -9,7 +9,7 @@ defmodule ApiChecker.Schedule do
 
   def env_var, do: @env_var
 
-  def get_tasks!() do
+  def get_tasks! do
     @env_var
     |> load_env_var!
     |> decode_json!

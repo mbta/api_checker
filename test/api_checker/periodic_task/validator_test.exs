@@ -1,8 +1,8 @@
 defmodule ApiChecker.PeriodicTask.ValidatorTest do
   use ExUnit.Case, async: true
+  alias ApiChecker.Check.JsonCheck
   alias ApiChecker.PeriodicTask
   alias PeriodicTask.{Validator, WeeklyTimeRange}
-  alias ApiChecker.Check.JsonCheck
   doctest Validator
 
   @valid_time_range %WeeklyTimeRange{

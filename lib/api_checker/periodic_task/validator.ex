@@ -2,8 +2,8 @@ defmodule ApiChecker.PeriodicTask.Validator do
   @moduledoc """
   Validates a PeriodicTask struct's values.
   """
-  alias ApiChecker.{PeriodicTask, Check}
-  alias ApiChecker.PeriodicTask.{WeeklyTimeRange}
+  alias ApiChecker.{Check, PeriodicTask}
+  alias ApiChecker.PeriodicTask.WeeklyTimeRange
 
   @doc """
   Validates a PeriodicTask struct's values.

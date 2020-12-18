@@ -5,8 +5,8 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRange do
   A valid time range in string format is "HH:MM-HH:MM" where
   the time left of the dash is before the time on the right.
   """
-  alias ApiChecker.PeriodicTask.{WeeklyTimeRange, Days, Times}
   alias ApiChecker.Holiday
+  alias ApiChecker.PeriodicTask.{Days, Times, WeeklyTimeRange}
 
   defstruct start: nil,
             stop: nil,
