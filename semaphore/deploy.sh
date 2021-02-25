@@ -39,7 +39,7 @@ function exit_if_too_many_checks {
   if [[ $checks -ge 12 ]]; then
     exit 1
   fi
-  sleep 5
+  sleep 10
   checks=$((checks+1))
 }
 
