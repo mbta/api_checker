@@ -1,4 +1,4 @@
-FROM hexpm/elixir:1.11.0-erlang-21.3.8.21-alpine-3.13.1 as builder
+FROM hexpm/elixir:1.11.3-erlang-23.2.6-alpine-3.13.2 as builder
 
 WORKDIR /root
 
@@ -19,7 +19,7 @@ WORKDIR /root
 RUN elixir --erl "-smp enable" /usr/local/bin/mix do deps.get --only prod, compile, distillery.release --verbose
 
 # Second stage: uses the built .tgz to get the files over
-FROM alpine:3.13.1
+FROM alpine:3.13.2
 
 RUN apk add --update libssl1.1 ncurses-libs bash \
 	&& rm -rf /var/cache/apk
