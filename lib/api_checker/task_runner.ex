@@ -6,6 +6,9 @@ defmodule ApiChecker.TaskRunner do
   require Logger
   alias ApiChecker.{Check, Check.Params, PeriodicTask, PreviousResponse}
 
+  @allowed_status_codes [200, 201]
+  @timeout 30_000
+
   @doc """
   Runs tasks and updates `PreviousResponse` state with task results.
   """
@@ -20,13 +23,6 @@ defmodule ApiChecker.TaskRunner do
     task_results
   end
 
-  @allowed_status_codes [200, 201]
-  @timeout 30_000
-
-  @doc """
-  Runs checks for given `PeriodicTask` struct. Logs if checks don't meet
-  expectation. Returns task and new `PreviousResponse` struct.
-  """
   def perform(%PeriodicTask{} = task, previous_response) do
     {status_code, body} =
       case HTTPoison.get(task.url, [], timeout: @timeout, recv_timeout: @timeout) do
