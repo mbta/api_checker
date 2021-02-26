@@ -2,12 +2,9 @@ defmodule ApiChecker.PeriodicTask.Times do
   @moduledoc """
   Functions for dealing with time/datetimes.
   """
-  alias Timex.Timezone
 
   @doc """
-  This is the timezone for MBTA is EST (Eastern Standard Time -0500).
-
-  The "EST" in this function should probably be pulled from a config.
+  This is the timezone for MBTA: Eastern Standard Time
   """
   def service_timezone do
     # New York is the exact same thing as Boston. trololol.
@@ -16,9 +13,9 @@ defmodule ApiChecker.PeriodicTask.Times do
 
   @doc """
   Converts any `DateTime` struct to a `DateTime` struct with
-  the service's timezone (EST in the case of MBTA).
+  the service's timezone.
   """
   def to_service_timezone(datetime) do
-    Timezone.convert(datetime, service_timezone())
+    DateTime.shift_zone!(datetime, service_timezone(), Tzdata.TimeZoneDatabase)
   end
 end
