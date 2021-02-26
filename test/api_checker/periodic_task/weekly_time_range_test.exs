@@ -1,5 +1,6 @@
 defmodule ApiChecker.PeriodicTask.WeeklyTimeRangeTest do
   use ExUnit.Case, async: true
+  alias ApiChecker.Holiday
   alias ApiChecker.PeriodicTask
   alias ApiChecker.PeriodicTask.WeeklyTimeRange
   doctest ApiChecker.PeriodicTask.WeeklyTimeRange
@@ -28,6 +29,26 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRangeTest do
     day: @holiday_dow,
     holiday: true
   }
+
+  setup do
+    # create fake holiday data instead of hitting the API
+    Application.stop(:api_checker)
+
+    on_exit(fn ->
+      Application.start(:api_checker)
+    end)
+
+    {:ok, _pid} =
+      Holiday.start_link(
+        holidays: %{
+          Date.to_iso8601(@holiday) => true,
+          Date.to_iso8601(@non_holiday) => false
+        },
+        name: Holiday
+      )
+
+    :ok
+  end
 
   describe "intersects?/1" do
     test "returns true when a datetime is in range" do

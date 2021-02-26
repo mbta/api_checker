@@ -7,10 +7,11 @@ defmodule ApiChecker.Holiday do
 
   @api_url "https://api-v3.mbta.com/services/?filter[route]=Red,1&fields[service]=added_dates,added_dates_notes,removed_dates,removed_dates_notes"
 
-  defstruct holidays: %{}
+  defstruct api_url: @api_url, holidays: %{}
 
-  def start_link(start_link_args \\ []) do
-    GenServer.start_link(__MODULE__, [], start_link_args)
+  def start_link(args \\ []) do
+    {state_args, start_link_args} = Keyword.split(args, ~w(api_url holidays)a)
+    GenServer.start_link(__MODULE__, struct!(__MODULE__, state_args), start_link_args)
   end
 
   def is_holiday?(pid \\ __MODULE__, %Date{} = d) do
@@ -18,8 +19,8 @@ defmodule ApiChecker.Holiday do
   end
 
   # Server functions
-  def init(_) do
-    {:ok, %__MODULE__{}}
+  def init(%__MODULE__{} = state) do
+    {:ok, state}
   end
 
   def handle_call({:is_holiday?, iso_date}, _from, %{holidays: holidays} = state) when is_binary(iso_date) do
@@ -27,11 +28,9 @@ defmodule ApiChecker.Holiday do
       if Map.has_key?(holidays, iso_date) do
         state
       else
-        {:ok, new_holidays} = fetch_holidays()
+        {:ok, new_holidays} = fetch_holidays(state.api_url)
 
-        Logger.info(fn ->
-          ["Found holidays: ", inspect(Map.keys(new_holidays))]
-        end)
+        Logger.info(["Found holidays: ", inspect(Map.keys(new_holidays))])
 
         new_holidays = Map.put_new(new_holidays, iso_date, false)
         %{state | holidays: Map.merge(holidays, new_holidays)}
@@ -40,15 +39,15 @@ defmodule ApiChecker.Holiday do
     {:reply, Map.get(state.holidays, iso_date, false), state}
   end
 
-  def fetch_holidays do
-    with {:ok, %{status_code: 200, body: body}} <- HTTPoison.get(@api_url),
+  defp fetch_holidays(url) do
+    with {:ok, %{status_code: 200, body: body}} <- HTTPoison.get(url),
          {:ok, json} <- Jason.decode(body),
          {:ok, data} <- Map.fetch(json, "data") do
       {:ok, parse_service_dates(data)}
     end
   end
 
-  def parse_service_dates(data) do
+  defp parse_service_dates(data) do
     for %{"type" => "service"} = service <- data,
         attributes = Map.get(service, "attributes"),
         dates = Map.get(attributes, "added_dates", []) ++ Map.get(attributes, "removed_dates", []),
