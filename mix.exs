@@ -29,7 +29,7 @@ defmodule ApiChecker.Mixfile do
   defp deps do
     [
       {:jason, "~> 1.0"},
-      {:timex, "~> 3.2"},
+      {:tzdata, "~> 1.1"},
       {:httpoison, "~> 1.0"},
       {:hackney, "~> 1.17"},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
