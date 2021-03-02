@@ -1,0 +1,13 @@
+/.dockerignore
+/.elixir_ls
+/.git
+/Dockerfile
+/_build
+/aws
+/config/*.local.exs
+/cover
+/deps
+/priv/*.json
+/semaphore
+/test
+*~

@@ -27,17 +27,19 @@ RUN apk add --update libssl1.1 ncurses-libs bash dumb-init \
 # Set environment
 ENV MIX_ENV=prod TERM=xterm LANG=C.UTF-8 REPLACE_OS_VARS=true
 
-WORKDIR /root/
+RUN addgroup -S api_checker && adduser -S -G api_checker api_checker
+USER api_checker
+WORKDIR /home/api_checker
 
-COPY --from=builder /root/_build/prod/rel /root/rel
+COPY --from=builder --chown=api_checker:api_checker /root/_build/prod/rel/api_checker /home/api_checker
 
 # Set default API checker configuration
 ENV API_CHECKER_CONFIGURATION=[]
 
 # Ensure SSL support is enabled
-RUN /root/rel/api_checker/bin/api_checker eval ":crypto.supports()"
+RUN /home/api_checker/bin/api_checker eval ":crypto.supports()"
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
-HEALTHCHECK CMD ["/root/rel/api_checker/bin/api_checker", "ping"]
-CMD ["/root/rel/api_checker/bin/api_checker", "foreground"]
+HEALTHCHECK CMD ["/home/api_checker/bin/api_checker", "ping"]
+CMD ["/home/api_checker/bin/api_checker", "foreground"]
