@@ -8,12 +8,7 @@ defmodule ApiChecker.Mixfile do
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [
-        coveralls: :test,
-        "coveralls.html": :test,
-        "coveralls.json": :test
-      ]
+      test_coverage: [tool: LcovEx]
     ]
   end
 
@@ -34,7 +29,7 @@ defmodule ApiChecker.Mixfile do
       {:hackney, "~> 1.17"},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:bypass, "~> 2.0", only: [:test]},
-      {:excoveralls, "~> 0.8", only: :test, runtime: false},
+      {:lcov_ex, "~> 0.2", only: :test, runtime: false},
       {:distillery, "~> 2.0", only: :prod, runtime: false}
     ]
   end
