@@ -29,6 +29,7 @@ defmodule ApiChecker.Mixfile do
       {:hackney, "~> 1.17"},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:bypass, "~> 2.0", only: [:test]},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:lcov_ex, "~> 0.2", only: :test, runtime: false},
       {:distillery, "~> 2.0", only: :prod, runtime: false}
     ]
