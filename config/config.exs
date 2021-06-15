@@ -7,4 +7,7 @@ case Mix.env() do
   :test ->
     config :logger, backends: []
     config :api_checker, check_filename: "priv/test_checks_config.json"
+
+  _ ->
+    :ok
 end
