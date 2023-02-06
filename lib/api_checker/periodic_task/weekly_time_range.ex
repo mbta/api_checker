@@ -216,9 +216,8 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRange do
 
     with true <- occurs_on_holiday?(range.holiday, datetime),
          true <- occurs_on_day?(range, day),
-         true <- is_at_or_after_start?(range, time),
-         true <- is_at_or_before_stop?(range, time) do
-      true
+         true <- is_at_or_after_start?(range, time) do
+      is_at_or_before_stop?(range, time)
     end
   end
 

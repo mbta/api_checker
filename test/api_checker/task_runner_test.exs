@@ -32,16 +32,16 @@ defmodule ApiChecker.TaskRunnerTest do
 
       assert captured =~ ~s(Check OK)
       assert captured =~ ~s(task_name="mbta-testing-01")
-      assert captured =~ ~s(%ApiChecker.Check.JsonCheck{expects: "not_empty", keypath: ["data"]})
+      assert captured =~ ~s(%ApiChecker.Check.JsonCheck{keypath: ["data"], expects: "not_empty"})
       assert captured =~ ~s(length=)
-      assert captured =~ ~s(%ApiChecker.Check.JsonCheck{expects: "jsonapi", keypath: ["jsonapi"]})
+      assert captured =~ ~s(%ApiChecker.Check.JsonCheck{keypath: ["jsonapi"], expects: "jsonapi"})
     end
 
     test "logs failure for failed check" do
       captured = capture_log(fn -> TaskRunner.perform(@failure_periodic_task, %PreviousResponse{}) end)
       assert captured =~ ~s(Check Failure)
       assert captured =~ ~s(task_name="failure-task")
-      assert captured =~ ~s(%ApiChecker.Check.JsonCheck{expects: "not_empty", keypath: ["unexpected"]})
+      assert captured =~ ~s(%ApiChecker.Check.JsonCheck{keypath: ["unexpected"], expects: "not_empty"})
       assert captured =~ ~s(reason=:invalid_array)
       assert captured =~ ~s(length=)
       assert captured =~ ~s(reason=:array_too_small)

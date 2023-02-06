@@ -2,6 +2,7 @@
 /.elixir_ls
 /.git
 /Dockerfile
+/docker_env
 /_build
 /aws
 /config/*.local.exs
