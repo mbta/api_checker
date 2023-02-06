@@ -1,4 +1,8 @@
-FROM hexpm/elixir:1.11.3-erlang-23.2.6-alpine-3.13.2 as builder
+ARG ELIXIR_VERSION=1.11.3
+ARG ERLANG_VERSION=23.2.6
+ARG ALPINE_VERSION=3.16.0
+
+FROM hexpm/elixir:${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-alpine-${ALPINE_VERSION} as builder
 
 WORKDIR /root
 
@@ -19,7 +23,7 @@ WORKDIR /root
 RUN mix do deps.get --only prod, compile, distillery.release --verbose
 
 # Second stage: copies the release over
-FROM alpine:3.13.2
+FROM alpine:${ALPINE_VERSION}
 
 RUN apk add --update libssl1.1 ncurses-libs bash dumb-init \
 	&& rm -rf /var/cache/apk
