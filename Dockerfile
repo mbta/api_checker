@@ -1,6 +1,6 @@
-ARG ELIXIR_VERSION=1.11.3
-ARG ERLANG_VERSION=23.2.6
-ARG ALPINE_VERSION=3.16.0
+ARG ELIXIR_VERSION=1.14.3
+ARG ERLANG_VERSION=25.2.2
+ARG ALPINE_VERSION=3.17.0
 
 FROM hexpm/elixir:${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-alpine-${ALPINE_VERSION} as builder
 
@@ -15,21 +15,27 @@ RUN apk --update add git make
 
 ENV MIX_ENV=prod
 
-ADD . .
-
 WORKDIR /root
 
-# Generates a compiled prod release using distillery.
-RUN mix do deps.get --only prod, compile, distillery.release --verbose
+ADD config config
+ADD mix.* ./
+
+# Get dependencies
+RUN mix do deps.get --only prod, deps.compile
+
+ADD . .
+
+# Generates a compiled prod release
+RUN mix release
 
 # Second stage: copies the release over
 FROM alpine:${ALPINE_VERSION}
 
-RUN apk add --update libssl1.1 ncurses-libs bash dumb-init \
+RUN apk add --update libssl1.1 libstdc++ libgcc ncurses-libs bash dumb-init \
 	&& rm -rf /var/cache/apk
 
 # Set environment
-ENV MIX_ENV=prod TERM=xterm LANG=C.UTF-8 REPLACE_OS_VARS=true
+ENV MIX_ENV=prod TERM=xterm LANG=C.UTF-8
 
 RUN addgroup -S api_checker && adduser -S -G api_checker api_checker
 USER api_checker
@@ -45,5 +51,5 @@ RUN /home/api_checker/bin/api_checker eval ":crypto.supports()"
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
-HEALTHCHECK CMD ["/home/api_checker/bin/api_checker", "ping"]
-CMD ["/home/api_checker/bin/api_checker", "foreground"]
+HEALTHCHECK CMD ["/home/api_checker/bin/api_checker", "rpc", "1 + 1"]
+CMD ["/home/api_checker/bin/api_checker", "start"]

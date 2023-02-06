@@ -130,9 +130,7 @@ defmodule ApiChecker.TaskRunner do
   end
 
   defp log_check_result({:error, reason, additional_data}, check, params) do
-    "Check Failure - task_name=#{inspect(params.name)} check=#{inspect(check)} reason=#{inspect(reason)}#{
-      additional_log(additional_data)
-    }"
+    "Check Failure - task_name=#{inspect(params.name)} check=#{inspect(check)} reason=#{inspect(reason)}#{additional_log(additional_data)}"
   end
 
   defp additional_log(additional_data) do
