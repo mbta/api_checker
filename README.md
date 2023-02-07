@@ -1,7 +1,7 @@
 # ApiChecker
 
-[![Build Status](https://semaphoreci.com/api/v1/mbta/api-checker/branches/master/badge.svg)](https://semaphoreci.com/mbta/api-checker)
-[![codecov](https://codecov.io/gh/mbta/api-checker/branch/master/graph/badge.svg)](https://codecov.io/gh/mbta/api-checker)
+[![Elixir CI](https://github.com/mbta/api_checker/actions/workflows/elixir.yml/badge.svg)](https://github.com/mbta/api_checker/actions/workflows/elixir.yml)
+[![Docker](https://github.com/mbta/api_checker/actions/workflows/docker.yml/badge.svg)](https://github.com/mbta/api_checker/actions/workflows/docker.yml)
 
 An API checker that runs periodically and logs an error when an API's HTTP response is invalid.
 
