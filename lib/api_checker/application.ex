@@ -18,6 +18,8 @@ defmodule ApiChecker.Application do
   end
 
   def start(_type, _args) do
+    # Invoke Sentry logger:
+    _ = Logger.add_backend(Sentry.LoggerBackend)
     load_env_vars_from_file()
     # List all child processes to be supervised
     children = [
