@@ -1,3 +1,4 @@
+import Config
 is_prod? = config_env() == :prod
 
 if is_prod? do
