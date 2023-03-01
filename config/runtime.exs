@@ -1,7 +1,9 @@
 import Config
-is_prod? = config_env() == :prod
 
-if is_prod? do
+is_prod? = config_env() == :prod
+is_release? = not is_nil(System.get_env("RELEASE_MODE"))
+
+if is_prod? and is_release? do
   sentry_env = System.fetch_env!("SENTRY_ENV")
 
   config :sentry,
