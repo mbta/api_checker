@@ -26,7 +26,6 @@ defmodule ApiChecker.Mixfile do
       {:jason, "~> 1.0"},
       {:tzdata, "~> 1.1"},
       {:httpoison, "~> 1.0"},
-      {:hackney, "~> 1.17"},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:bypass, "~> 2.0", only: [:test]},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
