@@ -5,7 +5,7 @@ case Mix.env() do
     config :api_checker, check_filename: "priv/dev_checks_config.json"
 
   :test ->
-    config :logger, backends: []
+    config :logger, default_handler: false
     config :api_checker, check_filename: "priv/test_checks_config.json"
 
   _ ->

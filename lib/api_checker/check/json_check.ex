@@ -34,9 +34,6 @@ defmodule ApiChecker.Check.JsonCheck do
          true <- expectation_exists?(expects) do
       :ok
     else
-      {:error, _} = err ->
-        err
-
       _ ->
         {:error, :invalid_json_check_config}
     end
