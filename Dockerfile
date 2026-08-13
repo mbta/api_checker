@@ -31,7 +31,7 @@ RUN mix release
 # Second stage: copies the release over
 FROM alpine:${ALPINE_VERSION}
 
-RUN apk add --update libssl3 libstdc++ libgcc ncurses-libs bash dumb-init \
+RUN apk add --update libssl3 libstdc++ libgcc liblksctp ncurses-libs bash dumb-init \
 	&& rm -rf /var/cache/apk
 
 # Set environment
