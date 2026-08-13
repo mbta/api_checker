@@ -41,16 +41,16 @@ defmodule ApiChecker.PeriodicTask.Days do
   Returns true for capitalized three-lettered abbreviations for days of the week.
   Returns false for anything else.
 
-  iex> Days.is_day_of_week?("FRI")
+  iex> Days.day_of_week?("FRI")
   true
 
-  iex> Days.is_day_of_week?("fri")
+  iex> Days.day_of_week?("fri")
   false
 
-  iex> Days.is_day_of_week?("DAY")
+  iex> Days.day_of_week?("DAY")
   false
   """
-  def is_day_of_week?(day) do
+  def day_of_week?(day) do
     day in @names
   end
 end

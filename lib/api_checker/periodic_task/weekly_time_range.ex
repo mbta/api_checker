@@ -193,7 +193,7 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRange do
   end
 
   def validate_day_of_week(%WeeklyTimeRange{day: day}) do
-    if Days.is_day_of_week?(day) do
+    if Days.day_of_week?(day) do
       :ok
     else
       {:error, :invalid_day_of_week}
@@ -216,8 +216,8 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRange do
 
     with true <- occurs_on_holiday?(range.holiday, datetime),
          true <- occurs_on_day?(range, day),
-         true <- is_at_or_after_start?(range, time) do
-      is_at_or_before_stop?(range, time)
+         true <- at_or_after_start?(range, time) do
+      at_or_before_stop?(range, time)
     end
   end
 
@@ -227,38 +227,38 @@ defmodule ApiChecker.PeriodicTask.WeeklyTimeRange do
 
   defp occurs_on_holiday?(expected_holiday?, dt) do
     date = DateTime.to_date(dt)
-    Holiday.is_holiday?(date) == expected_holiday?
+    Holiday.holiday?(date) == expected_holiday?
   end
 
   @doc """
   Checks if a `time` at or after the `start` of a `WeeklyTimeRange`.
 
-  iex> WeeklyTimeRange.is_at_or_after_start?(%WeeklyTimeRange{start: ~T[11:00:00]}, ~T[11:01:00])
+  iex> WeeklyTimeRange.at_or_after_start?(%WeeklyTimeRange{start: ~T[11:00:00]}, ~T[11:01:00])
   true
 
-  iex> WeeklyTimeRange.is_at_or_after_start?(%WeeklyTimeRange{start: ~T[11:00:00]}, ~T[11:00:00])
+  iex> WeeklyTimeRange.at_or_after_start?(%WeeklyTimeRange{start: ~T[11:00:00]}, ~T[11:00:00])
   true
 
-  iex> WeeklyTimeRange.is_at_or_after_start?(%WeeklyTimeRange{start: ~T[11:00:00]}, ~T[10:59:00])
+  iex> WeeklyTimeRange.at_or_after_start?(%WeeklyTimeRange{start: ~T[11:00:00]}, ~T[10:59:00])
   false
   """
-  def is_at_or_after_start?(%WeeklyTimeRange{start: start}, %Time{} = time) do
+  def at_or_after_start?(%WeeklyTimeRange{start: start}, %Time{} = time) do
     Time.compare(start, time) in [:lt, :eq]
   end
 
   @doc """
   Checks if a `time` is at or before the `stop` of a `WeeklyTimeRange`.
 
-  iex> WeeklyTimeRange.is_at_or_before_stop?(%WeeklyTimeRange{stop: ~T[22:00:00]}, ~T[11:00:00])
+  iex> WeeklyTimeRange.at_or_before_stop?(%WeeklyTimeRange{stop: ~T[22:00:00]}, ~T[11:00:00])
   true
 
-  iex> WeeklyTimeRange.is_at_or_before_stop?(%WeeklyTimeRange{stop: ~T[22:00:00]}, ~T[22:00:00])
+  iex> WeeklyTimeRange.at_or_before_stop?(%WeeklyTimeRange{stop: ~T[22:00:00]}, ~T[22:00:00])
   true
 
-  iex> WeeklyTimeRange.is_at_or_before_stop?(%WeeklyTimeRange{stop: ~T[06:30:00]}, ~T[06:00:00])
+  iex> WeeklyTimeRange.at_or_before_stop?(%WeeklyTimeRange{stop: ~T[06:30:00]}, ~T[06:00:00])
   true
   """
-  def is_at_or_before_stop?(%WeeklyTimeRange{stop: stop}, %Time{} = time) do
+  def at_or_before_stop?(%WeeklyTimeRange{stop: stop}, %Time{} = time) do
     Time.compare(time, stop) in [:lt, :eq]
   end
 

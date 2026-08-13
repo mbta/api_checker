@@ -5,13 +5,13 @@ defmodule ApiChecker.Check.StaleDataCheckTest do
   alias ApiChecker.PreviousResponse
   import ApiChecker.TestHelpers
 
-  describe "is_old_enough_to_be_stale?/3" do
+  describe "old_enough_to_be_stale?/3" do
     test "true for diff that is greater than the limit" do
       modified_at = datetime("2018-02-28T19:00:00Z")
       at_time = datetime("2018-02-28T19:05:00Z")
       # 1 second
       limit = 1
-      assert StaleDataCheck.is_old_enough_to_be_stale?(limit, modified_at, at_time)
+      assert StaleDataCheck.old_enough_to_be_stale?(limit, modified_at, at_time)
     end
 
     test "false for diff that is less than the limit" do
@@ -19,14 +19,14 @@ defmodule ApiChecker.Check.StaleDataCheckTest do
       at_time = datetime("2018-02-28T19:05:00Z")
       # 10 minutes
       limit = 600
-      refute StaleDataCheck.is_old_enough_to_be_stale?(limit, modified_at, at_time)
+      refute StaleDataCheck.old_enough_to_be_stale?(limit, modified_at, at_time)
     end
 
     test "works for StaleDataCheck struct and PreviousResponse struct" do
       stale_check = %StaleDataCheck{time_limit_in_seconds: 1}
       prev = %PreviousResponse{modified_at: datetime("2018-02-28T19:00:00Z")}
       at_time = datetime("2018-02-28T19:05:00Z")
-      assert StaleDataCheck.is_old_enough_to_be_stale?(stale_check, prev, at_time)
+      assert StaleDataCheck.old_enough_to_be_stale?(stale_check, prev, at_time)
     end
   end
 
