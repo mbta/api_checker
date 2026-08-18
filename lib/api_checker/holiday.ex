@@ -14,8 +14,8 @@ defmodule ApiChecker.Holiday do
     GenServer.start_link(__MODULE__, struct!(__MODULE__, state_args), start_link_args)
   end
 
-  def is_holiday?(pid \\ __MODULE__, %Date{} = d) do
-    GenServer.call(pid, {:is_holiday?, Date.to_iso8601(d)})
+  def holiday?(pid \\ __MODULE__, %Date{} = d) do
+    GenServer.call(pid, {:holiday?, Date.to_iso8601(d)})
   end
 
   # Server functions
@@ -23,7 +23,7 @@ defmodule ApiChecker.Holiday do
     {:ok, state}
   end
 
-  def handle_call({:is_holiday?, iso_date}, _from, %{holidays: holidays} = state) when is_binary(iso_date) do
+  def handle_call({:holiday?, iso_date}, _from, %{holidays: holidays} = state) when is_binary(iso_date) do
     state =
       if Map.has_key?(holidays, iso_date) do
         state

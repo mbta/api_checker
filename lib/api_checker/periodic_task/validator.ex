@@ -11,12 +11,12 @@ defmodule ApiChecker.PeriodicTask.Validator do
   :ok if valid, {:error, reason} if invalid.
   """
   def validate(%PeriodicTask{} = task) do
-    with :ok <- run_validation(task, :frequency_in_seconds, &is_pos_integer?/1, "must be a positive integer"),
+    with :ok <- run_validation(task, :frequency_in_seconds, &pos_integer?/1, "must be a positive integer"),
          :ok <- run_validation(task, :name, &is_binary/1, "must be a string"),
-         :ok <- run_validation(task, :name, &is_not_blank?/1, "cannot be blank"),
-         :ok <- run_validation(task, :url, &is_valid_url?/1, "must be a valid url"),
-         :ok <- run_validation(task, :time_ranges, &is_list_of_time_ranges?/1, "must be a list of valid time ranges"),
-         :ok <- run_validation(task, :checks, &is_list_of_checks?/1, "must be a list of valid checks") do
+         :ok <- run_validation(task, :name, &not_blank?/1, "cannot be blank"),
+         :ok <- run_validation(task, :url, &valid_url?/1, "must be a valid url"),
+         :ok <- run_validation(task, :time_ranges, &list_of_time_ranges?/1, "must be a list of valid time ranges"),
+         :ok <- run_validation(task, :checks, &list_of_checks?/1, "must be a list of valid checks") do
       :ok
     else
       {:error, _} = err ->
@@ -31,20 +31,20 @@ defmodule ApiChecker.PeriodicTask.Validator do
   @doc """
   Returns true for positive integers and false for anything else.
 
-  iex> Validator.is_pos_integer?(1)
+  iex> Validator.pos_integer?(1)
   true
 
-  iex> Validator.is_pos_integer?(0)
+  iex> Validator.pos_integer?(0)
   false
 
-  iex> Validator.is_pos_integer?(nil)
+  iex> Validator.pos_integer?(nil)
   false
   """
-  def is_pos_integer?(item) when is_integer(item) and item > 0 do
+  def pos_integer?(item) when is_integer(item) and item > 0 do
     true
   end
 
-  def is_pos_integer?(_) do
+  def pos_integer?(_) do
     false
   end
 
@@ -52,33 +52,33 @@ defmodule ApiChecker.PeriodicTask.Validator do
   Returns false for items that are blank (`""` and `nil`) and returns true
   for anything else.
 
-  iex> Validator.is_not_blank?("")
+  iex> Validator.not_blank?("")
   false
 
-  iex> Validator.is_not_blank?(nil)
+  iex> Validator.not_blank?(nil)
   false
 
-  iex> Validator.is_not_blank?("itemthing")
+  iex> Validator.not_blank?("itemthing")
   true
   """
-  def is_not_blank?(item), do: !is_blank?(item)
+  def not_blank?(item), do: !blank?(item)
 
   @doc """
   Returns true for items that are blank (`""` and `nil`) and returns false
   for anything else.
 
-  iex> Validator.is_blank?("")
+  iex> Validator.blank?("")
   true
 
-  iex> Validator.is_blank?(nil)
+  iex> Validator.blank?(nil)
   true
 
-  iex> Validator.is_blank?("itemthing")
+  iex> Validator.blank?("itemthing")
   false
   """
-  def is_blank?(""), do: true
-  def is_blank?(nil), do: true
-  def is_blank?(_), do: false
+  def blank?(""), do: true
+  def blank?(nil), do: true
+  def blank?(_), do: false
 
   @doc """
   A simple validation for url binaries.
@@ -86,26 +86,26 @@ defmodule ApiChecker.PeriodicTask.Validator do
   Returns true for well formatted URL strings and false for
   anything else.
 
-  iex> Validator.is_valid_url?("http://realtime.mbta.com/developer/api/v2/vehiclesbyroutes")
+  iex> Validator.valid_url?("http://realtime.mbta.com/developer/api/v2/vehiclesbyroutes")
   true
 
-  iex> Validator.is_valid_url?("ftp://somthing.org:4444")
+  iex> Validator.valid_url?("ftp://somthing.org:4444")
   false
 
-  iex> Validator.is_valid_url?("http://")
+  iex> Validator.valid_url?("http://")
   false
   """
-  def is_valid_url?(url) when is_binary(url) do
+  def valid_url?(url) when is_binary(url) do
     url
     |> URI.parse()
-    |> is_valid_url?
+    |> valid_url?
   end
 
-  def is_valid_url?(%URI{} = uri) do
-    uri.scheme in ["https", "http"] and is_not_blank?(uri.host)
+  def valid_url?(%URI{} = uri) do
+    uri.scheme in ["https", "http"] and not_blank?(uri.host)
   end
 
-  def is_valid_url?(_) do
+  def valid_url?(_) do
     false
   end
 
@@ -114,24 +114,24 @@ defmodule ApiChecker.PeriodicTask.Validator do
 
   Returns false for anything else.
 
-  iex> Validator.is_list_of_time_ranges?([])
+  iex> Validator.list_of_time_ranges?([])
   false
 
-  iex> Validator.is_list_of_time_ranges?([%WeeklyTimeRange{start: ~T[06:30:00], stop: ~T[07:30:00], day: "SAT"}])
+  iex> Validator.list_of_time_ranges?([%WeeklyTimeRange{start: ~T[06:30:00], stop: ~T[07:30:00], day: "SAT"}])
   true
 
-  iex> Validator.is_list_of_time_ranges?([%WeeklyTimeRange{start: nil, stop: ~T[07:30:00]}])
+  iex> Validator.list_of_time_ranges?([%WeeklyTimeRange{start: nil, stop: ~T[07:30:00]}])
   false
   """
-  def is_list_of_time_ranges?([]) do
+  def list_of_time_ranges?([]) do
     false
   end
 
-  def is_list_of_time_ranges?(list) when is_list(list) do
-    Enum.all?(list, &is_time_range?/1)
+  def list_of_time_ranges?(list) when is_list(list) do
+    Enum.all?(list, &time_range?/1)
   end
 
-  def is_list_of_time_ranges?(_) do
+  def list_of_time_ranges?(_) do
     false
   end
 
@@ -140,48 +140,48 @@ defmodule ApiChecker.PeriodicTask.Validator do
 
   Returns false for anything else.
 
-  iex> Validator.is_list_of_checks?([])
+  iex> Validator.list_of_checks?([])
   false
 
-  iex> Validator.is_list_of_checks?([%JsonCheck{expects: "not_empty"}])
+  iex> Validator.list_of_checks?([%JsonCheck{expects: "not_empty"}])
   true
 
-  iex> Validator.is_list_of_checks?([%JsonCheck{expects: "not_a_real_expectation"}])
+  iex> Validator.list_of_checks?([%JsonCheck{expects: "not_a_real_expectation"}])
   false
   """
-  def is_list_of_checks?([]) do
+  def list_of_checks?([]) do
     false
   end
 
-  def is_list_of_checks?(list) when is_list(list) do
-    Enum.all?(list, &is_check?/1)
+  def list_of_checks?(list) when is_list(list) do
+    Enum.all?(list, &check?/1)
   end
 
-  def is_list_of_checks?(_) do
+  def list_of_checks?(_) do
     false
   end
 
-  def is_check?(thing) do
+  def check?(thing) do
     Check.validate(thing) == :ok
   end
 
   @doc """
   Returns true for valid TimeRange structs and false for anything else.
 
-  iex> Validator.is_time_range?(%WeeklyTimeRange{start: ~T[06:30:00], stop: ~T[07:30:00], day: "WED"})
+  iex> Validator.time_range?(%WeeklyTimeRange{start: ~T[06:30:00], stop: ~T[07:30:00], day: "WED"})
   true
 
-  iex> Validator.is_time_range?(%WeeklyTimeRange{start: nil, stop: ~T[07:30:00], day: "TUE"})
+  iex> Validator.time_range?(%WeeklyTimeRange{start: nil, stop: ~T[07:30:00], day: "TUE"})
   false
 
-  iex> Validator.is_time_range?(%WeeklyTimeRange{start: ~T[07:30:00], stop: ~T[07:30:00], day: "THU"})
+  iex> Validator.time_range?(%WeeklyTimeRange{start: ~T[07:30:00], stop: ~T[07:30:00], day: "THU"})
   false
   """
-  def is_time_range?(%WeeklyTimeRange{} = time_range) do
+  def time_range?(%WeeklyTimeRange{} = time_range) do
     WeeklyTimeRange.validate(time_range) == :ok
   end
 
-  def is_time_range?(_) do
+  def time_range?(_) do
     false
   end
 

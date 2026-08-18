@@ -36,13 +36,13 @@ defmodule ApiChecker.HolidayTest do
     {:ok, %{pid: pid}}
   end
 
-  describe "is_holiday?/1" do
+  describe "holiday?/1" do
     test "returns true for holidays", %{pid: pid} do
-      assert is_holiday?(pid, @holiday_date)
+      assert holiday?(pid, @holiday_date)
     end
 
     test "returns false for non holidays", %{pid: pid} do
-      refute is_holiday?(pid, @regular_date)
+      refute holiday?(pid, @regular_date)
     end
   end
 end
