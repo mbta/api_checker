@@ -25,6 +25,7 @@ defmodule ApiChecker.Application do
       # {ApiChecker.Worker, arg},
       # {ApiChecker.Schedule, nil},
       {ApiChecker.Holiday, name: ApiChecker.Holiday},
+      {ApiChecker.TripCountCache, nil},
       {ApiChecker.PreviousResponse, nil},
       {ApiChecker.Scheduler, nil}
     ]
