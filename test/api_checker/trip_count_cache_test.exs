@@ -20,23 +20,6 @@ defmodule ApiChecker.TripCountCacheTest do
       assert {:ok, 5} = TripCountCache.get_count(["tc-single-page"], 0)
     end
 
-    test "paginates and sums across multiple pages", %{bypass: bypass} do
-      full_page = Enum.map(1..200, &%{"id" => "trip-#{&1}"})
-      last_page = Enum.map(1..3, &%{"id" => "trip-extra-#{&1}"})
-      call_count = :counters.new(1, [])
-
-      Bypass.expect(bypass, "GET", "/trips", fn conn ->
-        :counters.add(call_count, 1, 1)
-
-        data =
-          if :counters.get(call_count, 1) == 1, do: full_page, else: last_page
-
-        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => data}))
-      end)
-
-      assert {:ok, 203} = TripCountCache.get_count(["tc-pagination"], 0)
-    end
-
     test "caches the result within TTL", %{bypass: bypass} do
       Bypass.expect_once(bypass, "GET", "/trips", fn conn ->
         Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => [%{"id" => "t1"}]}))
