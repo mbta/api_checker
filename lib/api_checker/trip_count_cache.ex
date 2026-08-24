@@ -15,8 +15,6 @@ defmodule ApiChecker.TripCountCache do
   @default_ttl_seconds 60 * 60
   @default_base_url "https://api-v3.mbta.com"
 
-  # --- Public API ---
-
   def start_link(_opts) do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
@@ -29,8 +27,6 @@ defmodule ApiChecker.TripCountCache do
       when is_list(routes) and length(routes) > 0 do
     GenServer.call(__MODULE__, {:get_count, routes, ttl_seconds})
   end
-
-  # --- GenServer callbacks ---
 
   @impl GenServer
   def init(state) do
@@ -60,8 +56,6 @@ defmodule ApiChecker.TripCountCache do
         end
     end
   end
-
-  # --- Private helpers ---
 
   defp cache_key(routes) do
     routes |> Enum.sort() |> Enum.join(",")
