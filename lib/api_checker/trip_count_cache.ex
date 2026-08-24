@@ -12,7 +12,7 @@ defmodule ApiChecker.TripCountCache do
   use GenServer
   require Logger
 
-  @default_ttl_seconds 60
+  @default_ttl_seconds 60 * 60
   @default_base_url "https://api-v3.mbta.com"
 
   # --- Public API ---
