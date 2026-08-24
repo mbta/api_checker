@@ -75,7 +75,9 @@ defmodule ApiChecker.TripCountCache do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         case Jason.decode(body) do
           {:ok, %{"data" => data}} when is_list(data) ->
-            {:ok, length(data)}
+            route_set = MapSet.new(routes)
+            count = Enum.count(data, &trip_on_route?(&1, route_set))
+            {:ok, count}
 
           {:ok, _} ->
             {:error, :unexpected_response_shape}
@@ -91,4 +93,13 @@ defmodule ApiChecker.TripCountCache do
         {:error, reason}
     end
   end
+
+  defp trip_on_route?(
+         %{"relationships" => %{"route" => %{"data" => %{"id" => route_id}}}},
+         route_set
+       ) do
+    MapSet.member?(route_set, route_id)
+  end
+
+  defp trip_on_route?(_, _), do: false
 end

@@ -10,19 +10,49 @@ defmodule ApiChecker.TripCountCacheTest do
     %{bypass: bypass}
   end
 
+  defp trip(id, route_id) do
+    %{"id" => id, "relationships" => %{"route" => %{"data" => %{"id" => route_id}}}}
+  end
+
   describe "get_count/2" do
-    test "returns the number of trips from a single page", %{bypass: bypass} do
+    test "returns the number of trips from a response", %{bypass: bypass} do
       Bypass.expect_once(bypass, "GET", "/trips", fn conn ->
-        body = Jason.encode!(%{"data" => Enum.map(1..5, &%{"id" => "trip-#{&1}"})})
-        Plug.Conn.resp(conn, 200, body)
+        data = Enum.map(1..5, &trip("trip-#{&1}", "tc-single-page"))
+        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => data}))
       end)
 
       assert {:ok, 5} = TripCountCache.get_count(["tc-single-page"], 0)
     end
 
+    test "excludes trips whose route relationship is not in the requested set", %{bypass: bypass} do
+      Bypass.expect_once(bypass, "GET", "/trips", fn conn ->
+        data = [
+          trip("t1", "tc-filter-route"),
+          trip("t2", "tc-filter-route"),
+          trip("shuttle-1", "tc-filter-shuttle"),
+          trip("shuttle-2", "tc-filter-shuttle")
+        ]
+        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => data}))
+      end)
+
+      assert {:ok, 2} = TripCountCache.get_count(["tc-filter-route"], 0)
+    end
+
+    test "excludes trips with no route relationship", %{bypass: bypass} do
+      Bypass.expect_once(bypass, "GET", "/trips", fn conn ->
+        data = [
+          trip("t1", "tc-no-rel-route"),
+          %{"id" => "t2-no-rel"}
+        ]
+        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => data}))
+      end)
+
+      assert {:ok, 1} = TripCountCache.get_count(["tc-no-rel-route"], 0)
+    end
+
     test "caches the result within TTL", %{bypass: bypass} do
       Bypass.expect_once(bypass, "GET", "/trips", fn conn ->
-        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => [%{"id" => "t1"}]}))
+        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => [trip("t1", "tc-cache-ttl")]}))
       end)
 
       # First call fetches; second call must use cache (Bypass raises if called twice with expect_once)
@@ -32,7 +62,7 @@ defmodule ApiChecker.TripCountCacheTest do
 
     test "fetches fresh data after TTL expires", %{bypass: bypass} do
       Bypass.expect(bypass, "GET", "/trips", fn conn ->
-        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => [%{"id" => "t1"}]}))
+        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => [trip("t1", "tc-ttl-expire")]}))
       end)
 
       assert {:ok, 1} = TripCountCache.get_count(["tc-ttl-expire"], 0)
@@ -67,7 +97,7 @@ defmodule ApiChecker.TripCountCacheTest do
 
     test "sorts routes so cache key is order-independent", %{bypass: bypass} do
       Bypass.expect_once(bypass, "GET", "/trips", fn conn ->
-        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => [%{"id" => "t1"}]}))
+        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => [trip("t1", "tc-sort-a")]}))
       end)
 
       assert {:ok, 1} = TripCountCache.get_count(["tc-sort-b", "tc-sort-a"], 60)
