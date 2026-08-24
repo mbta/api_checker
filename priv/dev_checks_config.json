@@ -130,7 +130,7 @@
   },
   {
     "name": "commuter-rail-predictions",
-    "url": "https://api-v3.mbta.com/predictions?filter[route]=CR-Fairmount,CR-Fitchburg,CR-Worcester,CR-Franklin,CR-Greenbush,CR-Haverhill,CR-Kingston,CR-Lowell,CR-Middleborough,CR-Needham,CR-Newburyport,CR-Providence,CR-Foxboro&filter[stop_sequence]=3,4,5",
+    "url": "https://api-v3.mbta.com/predictions?filter[route]=CR-Fairmount,CR-Fitchburg,CR-Worcester,CR-Franklin,CR-Greenbush,CR-Haverhill,CR-Kingston,CR-Lowell,CR-Middleborough,CR-Needham,CR-Newburyport,CR-Providence,CR-Foxboro&filter[stop_sequence]=30,40,50",
     "active": true,
     "frequency_in_seconds": 120,
     "time_ranges": [
