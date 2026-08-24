@@ -69,8 +69,12 @@ defmodule ApiChecker.Check.JsonCheckTest do
 
     test "passes when response length >= floor(trip_count * multiplier)", %{bypass: bypass} do
       Bypass.expect_once(bypass, "GET", "/trips", fn conn ->
-        body = Jason.encode!(%{"data" => Enum.map(1..10, &%{"id" => "t#{&1}"})})
-        Plug.Conn.resp(conn, 200, body)
+        data =
+          Enum.map(1..10, fn i ->
+            %{"id" => "t#{i}", "relationships" => %{"route" => %{"data" => %{"id" => "jc-pass-route"}}}}
+          end)
+
+        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => data}))
       end)
 
       check_json = %{
@@ -89,8 +93,12 @@ defmodule ApiChecker.Check.JsonCheckTest do
 
     test "fails when response length < floor(trip_count * multiplier)", %{bypass: bypass} do
       Bypass.expect_once(bypass, "GET", "/trips", fn conn ->
-        body = Jason.encode!(%{"data" => Enum.map(1..10, &%{"id" => "t#{&1}"})})
-        Plug.Conn.resp(conn, 200, body)
+        data =
+          Enum.map(1..10, fn i ->
+            %{"id" => "t#{i}", "relationships" => %{"route" => %{"data" => %{"id" => "jc-fail-route"}}}}
+          end)
+
+        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => data}))
       end)
 
       check_json = %{
