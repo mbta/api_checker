@@ -63,8 +63,8 @@ defmodule ApiChecker.TripCountCache do
 
   defp fetch_trip_count(routes) do
     base_url = Application.get_env(:api_checker, :trip_count_base_url, @default_base_url)
-    route_param = Enum.sort(routes) |> Enum.join(",")
-    date_param = Date.utc_today() |> Date.to_iso8601()
+    route_param = routes |> Enum.sort() |> Enum.join(",")
+    date_param = Date.to_iso8601(Date.utc_today())
 
     url =
       "#{base_url}/trips" <>
