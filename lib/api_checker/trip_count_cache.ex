@@ -6,8 +6,7 @@ defmodule ApiChecker.TripCountCache do
   The MBTA V3 endpoint used is:
       GET /trips?filter[route]=<routes>&filter[date]=<today>
 
-  The count is derived by summing the number of entries in the `data` array across all
-  pages of results.
+  The count is the number of entries in the `data` array of the response.
   """
 
   use GenServer
@@ -15,7 +14,6 @@ defmodule ApiChecker.TripCountCache do
 
   @default_ttl_seconds 60
   @default_base_url "https://api-v3.mbta.com"
-  @page_size 200
 
   # --- Public API ---
 
@@ -74,29 +72,16 @@ defmodule ApiChecker.TripCountCache do
     route_param = Enum.sort(routes) |> Enum.join(",")
     date_param = Date.utc_today() |> Date.to_iso8601()
 
-    fetch_all_pages(base_url, route_param, date_param, 0, 0)
-  end
-
-  defp fetch_all_pages(base_url, route_param, date_param, offset, acc) do
     url =
       "#{base_url}/trips" <>
         "?filter[route]=#{URI.encode(route_param)}" <>
-        "&filter[date]=#{date_param}" <>
-        "&page[limit]=#{@page_size}" <>
-        "&page[offset]=#{offset}"
+        "&filter[date]=#{date_param}"
 
     case HTTPoison.get(url, [], timeout: 10_000, recv_timeout: 10_000) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         case Jason.decode(body) do
           {:ok, %{"data" => data}} when is_list(data) ->
-            count = length(data)
-            total = acc + count
-
-            if count < @page_size do
-              {:ok, total}
-            else
-              fetch_all_pages(base_url, route_param, date_param, offset + @page_size, total)
-            end
+            {:ok, length(data)}
 
           {:ok, _} ->
             {:error, :unexpected_response_shape}
