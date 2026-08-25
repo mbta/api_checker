@@ -82,7 +82,7 @@ defmodule ApiChecker.Check.JsonCheck do
         "routes" => routes,
         "multiplier" => multiplier
       })
-      when is_list(routes) and length(routes) > 0 and is_number(multiplier) and multiplier > 0 do
+      when is_list(routes) and routes != [] and is_number(multiplier) and multiplier > 0 do
     {:ok,
      fn list ->
        case ScheduleCountCache.get_count(routes) do
