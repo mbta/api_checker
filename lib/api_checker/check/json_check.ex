@@ -20,7 +20,7 @@ defmodule ApiChecker.Check.JsonCheck do
   """
 
   alias ApiChecker.Check.{JsonCheck, Params}
-  alias ApiChecker.TripCountCache
+  alias ApiChecker.ScheduleCountCache
   alias JsonCheck.{Array, Jsonapi}
 
   defstruct keypath: [],
@@ -78,20 +78,24 @@ defmodule ApiChecker.Check.JsonCheck do
       do: {:ok, &Array.validate_min_length(&1, min_length)}
 
   def get_expectation_func(%{
-        "expectation" => "active_trip_min_length",
+        "expectation" => "active_schedule_min_length",
         "routes" => routes,
         "multiplier" => multiplier
       })
       when is_list(routes) and length(routes) > 0 and is_number(multiplier) and multiplier > 0 do
     {:ok,
      fn list ->
-       case TripCountCache.get_count(routes) do
-         {:ok, trip_count} ->
-           min_length = floor(trip_count * multiplier)
-           Array.validate_min_length(list, min_length)
+       case ScheduleCountCache.get_count(routes) do
+         {:ok, schedule_count} ->
+           min_length = floor(schedule_count * multiplier)
+
+           case Array.validate_min_length(list, min_length) do
+             {:ok, length: length} -> {:ok, length: length, min_length: min_length}
+             other -> other
+           end
 
          {:error, reason} ->
-           {:error, :trip_count_unavailable, reason: reason}
+           {:error, :schedule_count_unavailable, reason: reason}
        end
      end}
   end
