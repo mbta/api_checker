@@ -91,6 +91,7 @@ defmodule ApiChecker.Check.JsonCheck do
 
            case Array.validate_min_length(list, min_length) do
              {:ok, length: length} -> {:ok, length: length, min_length: min_length}
+             {:error, :array_too_small, length: length} -> {:error, :array_too_small, length: length, min_length: min_length}
              other -> other
            end
 

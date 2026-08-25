@@ -112,7 +112,7 @@ defmodule ApiChecker.Check.JsonCheckTest do
       assert {:ok, json_check} = JsonCheck.from_json(check_json)
       # 10 trips * 0.5 = 5 minimum; providing only 4 items
       params = %Params{decoded_body: Enum.map(1..4, &%{"id" => &1})}
-      assert {:error, :array_too_small, length: 4} = JsonCheck.run_check(json_check, params)
+      assert {:error, :array_too_small, length: 4, min_length: 5} = JsonCheck.run_check(json_check, params)
     end
 
     test "returns error when trip count fetch fails", %{bypass: bypass} do
