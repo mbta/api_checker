@@ -45,6 +45,7 @@ defmodule ApiChecker.ScheduleCountCacheTest do
           schedule("shuttle-1", "sc-filter-shuttle"),
           schedule("shuttle-2", "sc-filter-shuttle")
         ]
+
         Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => data}))
       end)
 
