@@ -2,6 +2,7 @@ defmodule ApiChecker.ScheduleCountCacheTest do
   use ExUnit.Case, async: false
   alias ApiChecker.ScheduleCountCache
   import ExUnit.CaptureLog
+  doctest ScheduleCountCache
 
   setup do
     bypass = Bypass.open()
@@ -10,27 +11,39 @@ defmodule ApiChecker.ScheduleCountCacheTest do
     %{bypass: bypass}
   end
 
-  defp trip(id, route_id) do
+  defp schedule(id, route_id) do
     %{"id" => id, "relationships" => %{"route" => %{"data" => %{"id" => route_id}}}}
   end
 
   describe "get_count/2" do
-    test "returns the number of trips from a response", %{bypass: bypass} do
+    test "sends min_time and max_time filters in the request", %{bypass: bypass} do
       Bypass.expect_once(bypass, "GET", "/schedules", fn conn ->
-        data = Enum.map(1..5, &trip("trip-#{&1}", "sc-single-page"))
+        params = URI.decode_query(conn.query_string)
+        assert Map.has_key?(params, "filter[min_time]")
+        assert Map.has_key?(params, "filter[max_time]")
+        assert Map.has_key?(params, "filter[date]")
+        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => []}))
+      end)
+
+      ScheduleCountCache.get_count(["sc-params-check"], 0)
+    end
+
+    test "returns the number of matching schedules from a response", %{bypass: bypass} do
+      Bypass.expect_once(bypass, "GET", "/schedules", fn conn ->
+        data = Enum.map(1..5, &schedule("sched-#{&1}", "sc-single"))
         Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => data}))
       end)
 
-      assert {:ok, 5} = ScheduleCountCache.get_count(["sc-single-page"], 0)
+      assert {:ok, 5} = ScheduleCountCache.get_count(["sc-single"], 0)
     end
 
-    test "excludes trips whose route relationship is not in the requested set", %{bypass: bypass} do
+    test "excludes schedules whose route relationship is not in the requested set", %{bypass: bypass} do
       Bypass.expect_once(bypass, "GET", "/schedules", fn conn ->
         data = [
-          trip("t1", "sc-filter-route"),
-          trip("t2", "sc-filter-route"),
-          trip("shuttle-1", "sc-filter-shuttle"),
-          trip("shuttle-2", "sc-filter-shuttle")
+          schedule("s1", "sc-filter-route"),
+          schedule("s2", "sc-filter-route"),
+          schedule("shuttle-1", "sc-filter-shuttle"),
+          schedule("shuttle-2", "sc-filter-shuttle")
         ]
         Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => data}))
       end)
@@ -38,12 +51,9 @@ defmodule ApiChecker.ScheduleCountCacheTest do
       assert {:ok, 2} = ScheduleCountCache.get_count(["sc-filter-route"], 0)
     end
 
-    test "excludes trips with no route relationship", %{bypass: bypass} do
+    test "excludes schedules with no route relationship", %{bypass: bypass} do
       Bypass.expect_once(bypass, "GET", "/schedules", fn conn ->
-        data = [
-          trip("t1", "sc-no-rel-route"),
-          %{"id" => "t2-no-rel"}
-        ]
+        data = [schedule("s1", "sc-no-rel-route"), %{"id" => "s2-no-rel"}]
         Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => data}))
       end)
 
@@ -52,17 +62,16 @@ defmodule ApiChecker.ScheduleCountCacheTest do
 
     test "caches the result within TTL", %{bypass: bypass} do
       Bypass.expect_once(bypass, "GET", "/schedules", fn conn ->
-        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => [trip("t1", "sc-cache-ttl")]}))
+        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => [schedule("s1", "sc-cache-ttl")]}))
       end)
 
-      # First call fetches; second call must use cache (Bypass raises if called twice with expect_once)
       assert {:ok, 1} = ScheduleCountCache.get_count(["sc-cache-ttl"], 60)
       assert {:ok, 1} = ScheduleCountCache.get_count(["sc-cache-ttl"], 60)
     end
 
     test "fetches fresh data after TTL expires", %{bypass: bypass} do
       Bypass.expect(bypass, "GET", "/schedules", fn conn ->
-        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => [trip("t1", "sc-ttl-expire")]}))
+        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => [schedule("s1", "sc-ttl-expire")]}))
       end)
 
       assert {:ok, 1} = ScheduleCountCache.get_count(["sc-ttl-expire"], 0)
@@ -76,7 +85,8 @@ defmodule ApiChecker.ScheduleCountCacheTest do
 
       log =
         capture_log(fn ->
-          assert {:error, {:unexpected_status, 500}} = ScheduleCountCache.get_count(["sc-500-error"], 0)
+          assert {:error, {:unexpected_status, 500}} =
+                   ScheduleCountCache.get_count(["sc-500-error"], 0)
         end)
 
       assert log =~ "ScheduleCountCache fetch failed"
@@ -97,11 +107,10 @@ defmodule ApiChecker.ScheduleCountCacheTest do
 
     test "sorts routes so cache key is order-independent", %{bypass: bypass} do
       Bypass.expect_once(bypass, "GET", "/schedules", fn conn ->
-        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => [trip("t1", "sc-sort-a")]}))
+        Plug.Conn.resp(conn, 200, Jason.encode!(%{"data" => [schedule("s1", "sc-sort-a")]}))
       end)
 
       assert {:ok, 1} = ScheduleCountCache.get_count(["sc-sort-b", "sc-sort-a"], 60)
-      # Same routes in different order — should hit cache (Bypass raises if called twice)
       assert {:ok, 1} = ScheduleCountCache.get_count(["sc-sort-a", "sc-sort-b"], 60)
     end
   end

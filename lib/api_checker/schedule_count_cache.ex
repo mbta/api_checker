@@ -1,10 +1,14 @@
 defmodule ApiChecker.ScheduleCountCache do
   @moduledoc """
-  A GenServer that caches the count of scheduled trips per route-set by querying the
-  MBTA V3 API. Cache entries are invalidated after a configurable TTL (default: 60s).
+  A GenServer that caches the count of scheduled stop times per route-set by
+  querying the MBTA V3 API. Cache entries are invalidated after a configurable
+  TTL (default: 30 minutes).
 
   The MBTA V3 endpoint used is:
-      GET /schedules?filter[route]=<routes>&filter[date]=<today>
+      GET /schedules?filter[route]=<routes>&filter[date]=<date>&filter[min_time]=<HH:MM>&filter[max_time]=<HH:MM>
+
+  A 2-hour window (+/-1 hour around now) is used for `min_time`/`max_time` to keep the
+  response small.
 
   The count is the number of entries in the `data` array of the response that have a
   matching `relationships.route.data.id` (to exclude related routes like shuttles).
@@ -13,7 +17,11 @@ defmodule ApiChecker.ScheduleCountCache do
   use GenServer
   require Logger
 
-  @default_ttl_seconds 60 * 60
+  alias ApiChecker.Utilities
+
+  # The MBTA service day starts at 4:00 AM.
+  @window_hours 1
+  @default_ttl_seconds 60 * 30
   @default_base_url "https://api-v3.mbta.com"
 
   def start_link(_opts) do
@@ -21,8 +29,9 @@ defmodule ApiChecker.ScheduleCountCache do
   end
 
   @doc """
-  Returns `{:ok, count}` for the number of schedules on the given routes today,
-  using a cached value if one exists within `ttl_seconds`. Returns `{:error, reason}` on failure.
+  Returns `{:ok, count}` for the number of schedules on the given routes in a 2-hour
+  window around now, using a cached value if one exists within `ttl_seconds`.
+  Returns `{:error, reason}` on failure.
   """
   def get_count(routes, ttl_seconds \\ @default_ttl_seconds)
       when is_list(routes) and length(routes) > 0 do
@@ -65,12 +74,22 @@ defmodule ApiChecker.ScheduleCountCache do
   defp fetch_schedule_count(routes) do
     base_url = Application.get_env(:api_checker, :schedule_count_base_url, @default_base_url)
     route_param = routes |> Enum.sort() |> Enum.join(",")
-    date_param = Date.to_iso8601(Date.utc_today())
+
+    now_service =
+      DateTime.utc_now()
+      |> DateTime.shift_zone!("America/New_York", Tzdata.TimeZoneDatabase)
+
+    {service_date, gtfs_minutes_now} = Utilities.service_date_and_gtfs_minutes(now_service)
+    min_time = Utilities.format_gtfs_time(gtfs_minutes_now - @window_hours * 60)
+    max_time = Utilities.format_gtfs_time(gtfs_minutes_now + @window_hours * 60)
+    date_param = Date.to_iso8601(service_date)
 
     url =
       "#{base_url}/schedules" <>
         "?filter[route]=#{URI.encode(route_param)}" <>
-        "&filter[date]=#{date_param}"
+        "&filter[date]=#{date_param}" <>
+        "&filter[min_time]=#{min_time}" <>
+        "&filter[max_time]=#{max_time}"
 
     case HTTPoison.get(url, [], timeout: 10_000, recv_timeout: 10_000) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
