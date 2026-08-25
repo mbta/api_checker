@@ -3,17 +3,12 @@ defmodule ApiChecker.Utilities do
   General utility functions for ApiChecker.
   """
 
-  # The MBTA service day starts at 4:00 AM.
-  @service_day_start_hour 4
+  # The API considers 3 AM to be the rollover from one service day to another
+  @service_day_start_hour 3
 
   @doc """
   Given a `DateTime` in the service timezone, returns the service date and the GTFS
   time as total minutes since midnight of that service date.
-
-  GTFS time counts from midnight of the service date. The MBTA service day starts at
-  4:00 AM, so wall-clock times before 4 AM belong to the previous calendar day's service
-  and are expressed with hours >= 24 (e.g. 1:30 AM on Tuesday is GTFS time 25:30 on
-  Monday's service date).
 
   ## Examples
 

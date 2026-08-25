@@ -76,8 +76,7 @@ defmodule ApiChecker.ScheduleCountCache do
     route_param = routes |> Enum.sort() |> Enum.join(",")
 
     now_service =
-      DateTime.utc_now()
-      |> DateTime.shift_zone!("America/New_York", Tzdata.TimeZoneDatabase)
+      DateTime.shift_zone!(DateTime.utc_now(), "America/New_York", Tzdata.TimeZoneDatabase)
 
     {service_date, gtfs_minutes_now} = Utilities.service_date_and_gtfs_minutes(now_service)
     min_time = Utilities.format_gtfs_time(gtfs_minutes_now - @window_hours * 60)
