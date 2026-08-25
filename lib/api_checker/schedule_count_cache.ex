@@ -34,7 +34,7 @@ defmodule ApiChecker.ScheduleCountCache do
   Returns `{:error, reason}` on failure.
   """
   def get_count(routes, ttl_seconds \\ @default_ttl_seconds)
-      when is_list(routes) and length(routes) > 0 do
+      when is_list(routes) and routes != [] do
     GenServer.call(__MODULE__, {:get_count, routes, ttl_seconds})
   end
 
@@ -53,17 +53,22 @@ defmodule ApiChecker.ScheduleCountCache do
         {:reply, {:ok, count}, state}
 
       _ ->
-        case fetch_schedule_count(routes) do
-          {:ok, count} ->
-            {:reply, {:ok, count}, Map.put(state, key, {count, now})}
+        {reply, new_state} = do_fetch(routes, key, now, state)
+        {:reply, reply, new_state}
+    end
+  end
 
-          {:error, reason} = err ->
-            Logger.info(fn ->
-              "ScheduleCountCache fetch failed routes=#{inspect(routes)} reason=#{inspect(reason)}"
-            end)
+  defp do_fetch(routes, key, now, state) do
+    case fetch_schedule_count(routes) do
+      {:ok, count} ->
+        {{:ok, count}, Map.put(state, key, {count, now})}
 
-            {:reply, err, state}
-        end
+      {:error, reason} = err ->
+        Logger.info(fn ->
+          "ScheduleCountCache fetch failed routes=#{inspect(routes)} reason=#{inspect(reason)}"
+        end)
+
+        {err, state}
     end
   end
 
@@ -92,24 +97,28 @@ defmodule ApiChecker.ScheduleCountCache do
 
     case HTTPoison.get(url, [], timeout: 10_000, recv_timeout: 10_000) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        case Jason.decode(body) do
-          {:ok, %{"data" => data}} when is_list(data) ->
-            route_set = MapSet.new(routes)
-            count = Enum.count(data, &schedule_on_route?(&1, route_set))
-            {:ok, count}
-
-          {:ok, _} ->
-            {:error, :unexpected_response_shape}
-
-          {:error, reason} ->
-            {:error, {:json_decode_error, reason}}
-        end
+        parse_schedules(body, routes)
 
       {:ok, %HTTPoison.Response{status_code: status_code}} ->
         {:error, {:unexpected_status, status_code}}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, reason}
+    end
+  end
+
+  defp parse_schedules(body, routes) do
+    case Jason.decode(body) do
+      {:ok, %{"data" => data}} when is_list(data) ->
+        route_set = MapSet.new(routes)
+        count = Enum.count(data, &schedule_on_route?(&1, route_set))
+        {:ok, count}
+
+      {:ok, _} ->
+        {:error, :unexpected_response_shape}
+
+      {:error, reason} ->
+        {:error, {:json_decode_error, reason}}
     end
   end
 
