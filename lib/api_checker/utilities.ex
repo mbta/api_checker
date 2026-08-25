@@ -49,6 +49,6 @@ defmodule ApiChecker.Utilities do
   def format_gtfs_time(minutes) when is_integer(minutes) and minutes >= 0 do
     h = div(minutes, 60)
     m = rem(minutes, 60)
-    :io_lib.format("~2..0B:~2..0B", [h, m]) |> IO.iodata_to_binary()
+    "#{String.pad_leading(to_string(h), 2, "0")}:#{String.pad_leading(to_string(m), 2, "0")}"
   end
 end
