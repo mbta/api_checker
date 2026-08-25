@@ -59,16 +59,16 @@ defmodule ApiChecker.Check.JsonCheckTest do
     end
   end
 
-  describe "active_trip_min_length expectation" do
+  describe "active_schedule_min_length expectation" do
     setup do
       bypass = Bypass.open()
-      Application.put_env(:api_checker, :trip_count_base_url, "http://localhost:#{bypass.port}")
-      on_exit(fn -> Application.delete_env(:api_checker, :trip_count_base_url) end)
+      Application.put_env(:api_checker, :schedule_count_base_url, "http://localhost:#{bypass.port}")
+      on_exit(fn -> Application.delete_env(:api_checker, :schedule_count_base_url) end)
       %{bypass: bypass}
     end
 
     test "passes when response length >= floor(trip_count * multiplier)", %{bypass: bypass} do
-      Bypass.expect_once(bypass, "GET", "/trips", fn conn ->
+      Bypass.expect_once(bypass, "GET", "/schedules", fn conn ->
         data =
           Enum.map(1..10, fn i ->
             %{"id" => "t#{i}", "relationships" => %{"route" => %{"data" => %{"id" => "jc-pass-route"}}}}
@@ -79,7 +79,7 @@ defmodule ApiChecker.Check.JsonCheckTest do
 
       check_json = %{
         "expects" => %{
-          "expectation" => "active_trip_min_length",
+          "expectation" => "active_schedule_min_length",
           "routes" => ["jc-pass-route"],
           "multiplier" => 0.5
         }
@@ -88,11 +88,11 @@ defmodule ApiChecker.Check.JsonCheckTest do
       assert {:ok, json_check} = JsonCheck.from_json(check_json)
       # 10 trips * 0.5 = 5 minimum; providing 5 items
       params = %Params{decoded_body: Enum.map(1..5, &%{"id" => &1})}
-      assert {:ok, length: 5} = JsonCheck.run_check(json_check, params)
+      assert {:ok, length: 5, min_length: 5} = JsonCheck.run_check(json_check, params)
     end
 
     test "fails when response length < floor(trip_count * multiplier)", %{bypass: bypass} do
-      Bypass.expect_once(bypass, "GET", "/trips", fn conn ->
+      Bypass.expect_once(bypass, "GET", "/schedules", fn conn ->
         data =
           Enum.map(1..10, fn i ->
             %{"id" => "t#{i}", "relationships" => %{"route" => %{"data" => %{"id" => "jc-fail-route"}}}}
@@ -103,7 +103,7 @@ defmodule ApiChecker.Check.JsonCheckTest do
 
       check_json = %{
         "expects" => %{
-          "expectation" => "active_trip_min_length",
+          "expectation" => "active_schedule_min_length",
           "routes" => ["jc-fail-route"],
           "multiplier" => 0.5
         }
@@ -116,13 +116,13 @@ defmodule ApiChecker.Check.JsonCheckTest do
     end
 
     test "returns error when trip count fetch fails", %{bypass: bypass} do
-      Bypass.expect_once(bypass, "GET", "/trips", fn conn ->
+      Bypass.expect_once(bypass, "GET", "/schedules", fn conn ->
         Plug.Conn.resp(conn, 503, "unavailable")
       end)
 
       check_json = %{
         "expects" => %{
-          "expectation" => "active_trip_min_length",
+          "expectation" => "active_schedule_min_length",
           "routes" => ["jc-error-route"],
           "multiplier" => 0.5
         }
@@ -130,13 +130,13 @@ defmodule ApiChecker.Check.JsonCheckTest do
 
       assert {:ok, json_check} = JsonCheck.from_json(check_json)
       params = %Params{decoded_body: [1, 2, 3]}
-      assert {:error, :trip_count_unavailable, reason: _} = JsonCheck.run_check(json_check, params)
+      assert {:error, :schedule_count_unavailable, reason: _} = JsonCheck.run_check(json_check, params)
     end
 
     test "get_expectation_func/1 returns error for missing routes" do
       assert {:error, :no_such_expectation} =
                JsonCheck.get_expectation_func(%{
-                 "expectation" => "active_trip_min_length",
+                 "expectation" => "active_schedule_min_length",
                  "routes" => [],
                  "multiplier" => 0.5
                })
@@ -145,7 +145,7 @@ defmodule ApiChecker.Check.JsonCheckTest do
     test "get_expectation_func/1 returns error for non-positive multiplier" do
       assert {:error, :no_such_expectation} =
                JsonCheck.get_expectation_func(%{
-                 "expectation" => "active_trip_min_length",
+                 "expectation" => "active_schedule_min_length",
                  "routes" => ["Red"],
                  "multiplier" => 0
                })
