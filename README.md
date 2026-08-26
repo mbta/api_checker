@@ -176,6 +176,7 @@ Alternatively, for a more dynamic array length check, one can use the following 
 
 ```json
 { "expectation": "active_schedule_min_length", "routes": ["Red", "Orange", "Blue"], "multiplier": 0.1 }
+```
 
 This dynamically checks the v3 API `/schedules` endpoint for the indicated routes for
 a two-hour window centered around the current time (with some caching) and multiplies
@@ -183,7 +184,6 @@ the count of records returned by `multiplier` to get the desired minimum length.
 is to handle checks for things like predictions where the number of expected predictions
 is going to depend on the level of service that is currently active. Based on some initial
 empirical observation, a multiplier of around 0.05 seems appropriate for predictions.
-```
 
 ## Initial checks
 
