@@ -4,7 +4,7 @@ defmodule ApiChecker.UtilitiesTest do
   doctest Utilities
 
   describe "service_date_and_gtfs_minutes/1" do
-    test "returns current calendar date and wall-clock minutes for times at/after 4 AM" do
+    test "returns current calendar date and wall-clock minutes for times at/after 3 AM" do
       dt = %DateTime{
         year: 2024,
         month: 6,
@@ -21,7 +21,7 @@ defmodule ApiChecker.UtilitiesTest do
       assert {~D[2024-06-15], 630} = Utilities.service_date_and_gtfs_minutes(dt)
     end
 
-    test "returns previous calendar date and GTFS time > 24:00 for times before 4 AM" do
+    test "returns previous calendar date and GTFS time > 24:00 for times before 3 AM" do
       dt = %DateTime{
         year: 2024,
         month: 6,
@@ -38,12 +38,12 @@ defmodule ApiChecker.UtilitiesTest do
       assert {~D[2024-06-14], 1530} = Utilities.service_date_and_gtfs_minutes(dt)
     end
 
-    test "treats exactly 4 AM as the start of the current service day" do
+    test "treats exactly 3 AM as the start of the current service day" do
       dt = %DateTime{
         year: 2024,
         month: 6,
         day: 15,
-        hour: 4,
+        hour: 3,
         minute: 0,
         second: 0,
         time_zone: "America/New_York",
@@ -52,7 +52,7 @@ defmodule ApiChecker.UtilitiesTest do
         std_offset: 3600
       }
 
-      assert {~D[2024-06-15], 240} = Utilities.service_date_and_gtfs_minutes(dt)
+      assert {~D[2024-06-15], 180} = Utilities.service_date_and_gtfs_minutes(dt)
     end
 
     test "handles month boundary correctly" do
