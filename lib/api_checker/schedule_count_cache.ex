@@ -19,7 +19,6 @@ defmodule ApiChecker.ScheduleCountCache do
 
   alias ApiChecker.Utilities
 
-  # The MBTA service day starts at 4:00 AM.
   @window_hours 1
   @default_ttl_seconds 60 * 30
   @default_base_url "https://api-v3.mbta.com"
