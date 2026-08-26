@@ -157,9 +157,33 @@ The `type` field for a JSON payload check must be `"json"`.
 
 The `keypath` field is an array of key selectors that "select" values from nested json.
 
-The `expects` field is a string that declaratively indicates what checks to
-perform on the value selected by `keypath`. The allowed validators for
-`expects` are: `"not_empty"` and `"jsonapi"`.
+The `expects` field is a string or object that declaratively indicates what checks to
+perform on the value selected by `keypath`. The allowed stringy validators for
+`expects` are: `"not_empty"` and `"jsonapi"`. `"not_empty"` simply checks that the
+result is non-empty, whereas `"json_api"` checks that the response has a valid JSON:API
+version.
+
+Valid object values for the `expects` field are either of the following:
+
+```json
+{ "expectation": "min_length", "min_length": 100 }
+```
+
+This check asserts that the returned `keypath` is an array of at least a certain length,
+in this example 100.
+
+Alternatively, for a more dynamic array length check, one can use the following form of `expects` value:
+
+```json
+{ "expectation": "active_schedule_min_length", "routes": ["Red", "Orange", "Blue"], "multiplier": 0.1 }
+
+This dynamically checks the v3 API `/schedules` endpoint for the indicated routes for
+a two-hour window centered around the current time (with some caching) and multiplies
+it by `multiplier` to get the desired minimum length. This is to handle checks for
+things like predictions where the number of expected predictions is going to depend
+on the level of service that is currently active. Based on some initial empirical
+observation, a multiplier of around 0.1 seems appropriate for predictions.
+```
 
 ## Initial checks
 
