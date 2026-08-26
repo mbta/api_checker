@@ -61,7 +61,7 @@
         "expects": {
           "expectation": "active_schedule_min_length",
           "routes": ["Green-B", "Green-C", "Green-D", "Green-E", "Mattapan"],
-	  "multiplier": 0.1
+	  "multiplier": 0.05
         }
       }
     ]
@@ -128,7 +128,7 @@
         "expects": {
           "expectation": "active_schedule_min_length",
           "routes": ["Red", "Orange", "Blue"],
-	  "multiplier": 0.1
+	  "multiplier": 0.05
         }
       }
     ]
