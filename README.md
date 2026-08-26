@@ -179,10 +179,10 @@ Alternatively, for a more dynamic array length check, one can use the following 
 
 This dynamically checks the v3 API `/schedules` endpoint for the indicated routes for
 a two-hour window centered around the current time (with some caching) and multiplies
-it by `multiplier` to get the desired minimum length. This is to handle checks for
-things like predictions where the number of expected predictions is going to depend
-on the level of service that is currently active. Based on some initial empirical
-observation, a multiplier of around 0.1 seems appropriate for predictions.
+the count of records returned by `multiplier` to get the desired minimum length. This
+is to handle checks for things like predictions where the number of expected predictions
+is going to depend on the level of service that is currently active. Based on some initial
+empirical observation, a multiplier of around 0.05 seems appropriate for predictions.
 ```
 
 ## Initial checks
