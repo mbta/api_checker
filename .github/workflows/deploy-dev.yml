@@ -1,7 +1,9 @@
-name: Deploy to Prod
+name: Deploy to Dev
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
 
 jobs:
   deploy:
@@ -10,11 +12,11 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    environment: prod
-    concurrency: prod
+    environment: dev
+    concurrency: dev
     env:
       ECS_CLUSTER: api-checker
-      ECS_SERVICE: api-checker-prod
+      ECS_SERVICE: api-checker-dev
 
     steps:
       - uses: actions/checkout@v3
