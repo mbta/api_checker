@@ -34,13 +34,40 @@ defmodule ApiChecker.PeriodicTask do
          frequency_in_seconds: json["frequency_in_seconds"],
          time_ranges: time_ranges,
          name: json["name"],
-         url: json["url"],
+         url: build_url(json),
          checks: checks
        }}
     else
       {:error, _} = err ->
         err
     end
+  end
+
+  @doc """
+  Builds the url for a periodic task from its json configuration.
+
+  When `"url"` is present, it is used as-is. When `"path"` is present
+  instead, the url is built by joining the `BASE_URL` environment
+  variable with the given path.
+  """
+  def build_url(%{"url" => url}) when is_binary(url) do
+    url
+  end
+
+  def build_url(%{"path" => path}) when is_binary(path) do
+    case System.get_env("BASE_URL") do
+      base_url when is_binary(base_url) and base_url != "" ->
+        base_url
+        |> URI.merge(path)
+        |> URI.to_string()
+
+      _ ->
+        nil
+    end
+  end
+
+  def build_url(_) do
+    nil
   end
 
   def validate(%PeriodicTask{} = task) do

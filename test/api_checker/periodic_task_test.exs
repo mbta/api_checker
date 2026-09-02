@@ -53,6 +53,35 @@ defmodule ApiChecker.PeriodicTaskTest do
       ignored = Map.put(@valid_periodic_task_json, "active", false)
       assert {:error, :ignored} = PeriodicTask.from_json(ignored)
     end
+
+    test "builds url from path and BASE_URL env var when path is given" do
+      previous_base_url = System.get_env("BASE_URL")
+      System.put_env("BASE_URL", "https://api-v3.mbta.com")
+
+      json =
+        @valid_periodic_task_json
+        |> Map.drop(["url"])
+        |> Map.put("path", "/predictions?filter[route]=Red,Orange,Blue")
+
+      assert {:ok, task} = PeriodicTask.from_json(json)
+      assert task.url == "https://api-v3.mbta.com/predictions?filter[route]=Red,Orange,Blue"
+
+      if previous_base_url, do: System.put_env("BASE_URL", previous_base_url), else: System.delete_env("BASE_URL")
+    end
+
+    test "errors when path is given but BASE_URL env var is not set" do
+      previous_base_url = System.get_env("BASE_URL")
+      System.delete_env("BASE_URL")
+
+      json =
+        @valid_periodic_task_json
+        |> Map.drop(["url"])
+        |> Map.put("path", "/predictions?filter[route]=Red,Orange,Blue")
+
+      assert {:error, _} = PeriodicTask.from_json(json)
+
+      if previous_base_url, do: System.put_env("BASE_URL", previous_base_url)
+    end
   end
 
   @valid_periodic_task %PeriodicTask{
