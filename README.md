@@ -95,7 +95,7 @@ The `name` field is a unique identifier for a task. The `name` is the `task_name
 
 The `url` field is the url that will be checked for correct response JSON and/or stale data and must begin with `"http"` or `"https"`.
 
-Instead of `url`, a task may specify a `path` field, e.g. `"path": "/predictions?filter[route]=Red,Orange,Blue"`. When `path` is used, the url that is checked is built by joining the `BASE_URL` environment variable with the given `path`.
+Instead of `url`, a task may specify a `path` field, e.g. `"path": "/predictions?filter[route]=Red,Orange,Blue"`. When `path` is used, the url that is checked is built by joining the `BASE_URL` environment variable with the given `path`. If the optional `API_KEY` environment variable is also set, it will be appended to the resulting url as an `api_key` query parameter.
 
 The `active` field, if set to false, will ignore that check.
 
