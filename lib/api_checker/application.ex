@@ -17,8 +17,18 @@ defmodule ApiChecker.Application do
     end
   end
 
+  @doc """
+  Reads the `BASE_URL` environment variable into the application
+  configuration, so the rest of the application can read it from there
+  instead of calling `System.get_env/1` directly.
+  """
+  def load_base_url_from_env do
+    Application.put_env(:api_checker, :base_url, System.get_env("BASE_URL"))
+  end
+
   def start(_type, _args) do
     load_env_vars_from_file()
+    load_base_url_from_env()
     # List all child processes to be supervised
     children = [
       # Starts a worker by calling: ApiChecker.Worker.start_link(arg)

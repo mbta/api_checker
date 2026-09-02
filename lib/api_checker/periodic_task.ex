@@ -47,15 +47,15 @@ defmodule ApiChecker.PeriodicTask do
   Builds the url for a periodic task from its json configuration.
 
   When `"url"` is present, it is used as-is. When `"path"` is present
-  instead, the url is built by joining the `BASE_URL` environment
-  variable with the given path.
+  instead, the url is built by joining the `:base_url` application
+  configuration value with the given path.
   """
   def build_url(%{"url" => url}) when is_binary(url) do
     url
   end
 
   def build_url(%{"path" => path}) when is_binary(path) do
-    case System.get_env("BASE_URL") do
+    case Application.get_env(:api_checker, :base_url) do
       base_url when is_binary(base_url) and base_url != "" ->
         base_url
         |> URI.merge(path)
