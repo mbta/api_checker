@@ -17,21 +17,11 @@ defmodule ApiChecker.Application do
     end
   end
 
-  @doc """
-  Reads the `BASE_URL` environment variable into the application
-  configuration, so the rest of the application can read it from there
-  instead of calling `System.get_env/1` directly.
-  """
-  def load_base_url_from_env do
+  defp load_base_url_from_env do
     Application.put_env(:api_checker, :base_url, System.get_env("BASE_URL"))
   end
 
-  @doc """
-  Reads the optional `API_KEY` environment variable into the application
-  configuration, so the rest of the application can read it from there
-  instead of calling `System.get_env/1` directly.
-  """
-  def load_api_key_from_env do
+  defp load_api_key_from_env do
     Application.put_env(:api_checker, :api_key, System.get_env("API_KEY"))
   end
 
