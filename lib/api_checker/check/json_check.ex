@@ -20,6 +20,7 @@ defmodule ApiChecker.Check.JsonCheck do
   """
 
   alias ApiChecker.Check.{JsonCheck, Params}
+  alias ApiChecker.ScheduleCountCache
   alias JsonCheck.{Array, Jsonapi}
 
   defstruct keypath: [],
@@ -75,6 +76,35 @@ defmodule ApiChecker.Check.JsonCheck do
   def get_expectation_func(%{"expectation" => "min_length", "min_length" => min_length})
       when is_integer(min_length) and min_length > 0,
       do: {:ok, &Array.validate_min_length(&1, min_length)}
+
+  def get_expectation_func(%{
+        "expectation" => "active_schedule_min_length",
+        "routes" => routes,
+        "multiplier" => multiplier
+      })
+      when is_list(routes) and routes != [] and is_number(multiplier) and multiplier > 0 do
+    {:ok,
+     fn list ->
+       case ScheduleCountCache.get_count(routes) do
+         {:ok, schedule_count} ->
+           min_length = floor(schedule_count * multiplier)
+
+           case Array.validate_min_length(list, min_length) do
+             {:ok, length: length} ->
+               {:ok, length: length, min_length: min_length}
+
+             {:error, :array_too_small, length: length} ->
+               {:error, :array_too_small, length: length, min_length: min_length}
+
+             other ->
+               other
+           end
+
+         {:error, reason} ->
+           {:error, :schedule_count_unavailable, reason: reason}
+       end
+     end}
+  end
 
   def get_expectation_func(_), do: {:error, :no_such_expectation}
 
