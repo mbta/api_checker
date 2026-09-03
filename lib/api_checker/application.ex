@@ -17,8 +17,18 @@ defmodule ApiChecker.Application do
     end
   end
 
+  defp load_base_url_from_env do
+    Application.put_env(:api_checker, :base_url, System.get_env("BASE_URL"))
+  end
+
+  defp load_api_key_from_env do
+    Application.put_env(:api_checker, :api_key, System.get_env("API_KEY"))
+  end
+
   def start(_type, _args) do
     load_env_vars_from_file()
+    load_base_url_from_env()
+    load_api_key_from_env()
     # List all child processes to be supervised
     children = [
       # Starts a worker by calling: ApiChecker.Worker.start_link(arg)

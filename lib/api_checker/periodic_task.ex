@@ -34,13 +34,61 @@ defmodule ApiChecker.PeriodicTask do
          frequency_in_seconds: json["frequency_in_seconds"],
          time_ranges: time_ranges,
          name: json["name"],
-         url: json["url"],
+         url: build_url(json),
          checks: checks
        }}
     else
       {:error, _} = err ->
         err
     end
+  end
+
+  @doc """
+  Builds the url for a periodic task from its json configuration.
+
+  When `"url"` is present, it is used as-is. When `"path"` is present
+  instead, the url is built by joining the `:base_url` application
+  configuration value with the given path. In that case, if the
+  `:api_key` application configuration value is present, it is appended
+  to the url as an `api_key` query parameter.
+  """
+  def build_url(%{"url" => url}) when is_binary(url) do
+    url
+  end
+
+  def build_url(%{"path" => path}) when is_binary(path) do
+    case Application.get_env(:api_checker, :base_url) do
+      base_url when is_binary(base_url) and base_url != "" ->
+        base_url
+        |> URI.merge(path)
+        |> URI.to_string()
+        |> append_api_key(Application.get_env(:api_checker, :api_key))
+
+      _ ->
+        nil
+    end
+  end
+
+  def build_url(_) do
+    nil
+  end
+
+  defp append_api_key(url, api_key) when is_binary(api_key) and api_key != "" do
+    uri = URI.parse(url)
+
+    query =
+      (uri.query || "")
+      |> URI.decode_query(%{}, :rfc3986)
+      |> Map.put("api_key", api_key)
+      |> URI.encode_query(:rfc3986)
+
+    uri
+    |> Map.put(:query, query)
+    |> URI.to_string()
+  end
+
+  defp append_api_key(url, _api_key) do
+    url
   end
 
   def validate(%PeriodicTask{} = task) do
