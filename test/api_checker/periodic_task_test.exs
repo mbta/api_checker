@@ -1,5 +1,5 @@
 defmodule ApiChecker.PeriodicTaskTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case
   alias ApiChecker.Check.JsonCheck
   alias ApiChecker.{PeriodicTask, PeriodicTask.WeeklyTimeRange}
   doctest PeriodicTask
@@ -52,6 +52,112 @@ defmodule ApiChecker.PeriodicTaskTest do
     test "errors for ignored json" do
       ignored = Map.put(@valid_periodic_task_json, "active", false)
       assert {:error, :ignored} = PeriodicTask.from_json(ignored)
+    end
+
+    test "builds url from path and application base_url config when path is given" do
+      previous_base_url = Application.get_env(:api_checker, :base_url)
+
+      on_exit(fn ->
+        if previous_base_url,
+          do: Application.put_env(:api_checker, :base_url, previous_base_url),
+          else: Application.delete_env(:api_checker, :base_url)
+      end)
+
+      Application.put_env(:api_checker, :base_url, "https://api-v3.mbta.com")
+
+      json =
+        @valid_periodic_task_json
+        |> Map.drop(["url"])
+        |> Map.put("path", "/predictions?filter[route]=Red,Orange,Blue")
+
+      assert {:ok, task} = PeriodicTask.from_json(json)
+      assert task.url == "https://api-v3.mbta.com/predictions?filter[route]=Red,Orange,Blue"
+    end
+
+    test "errors when path is given but application base_url config is not set" do
+      previous_base_url = Application.get_env(:api_checker, :base_url)
+
+      on_exit(fn ->
+        if previous_base_url, do: Application.put_env(:api_checker, :base_url, previous_base_url)
+      end)
+
+      Application.delete_env(:api_checker, :base_url)
+
+      json =
+        @valid_periodic_task_json
+        |> Map.drop(["url"])
+        |> Map.put("path", "/predictions?filter[route]=Red,Orange,Blue")
+
+      assert {:error, _} = PeriodicTask.from_json(json)
+    end
+
+    test "appends api_key to url built from path when application api_key config is set" do
+      previous_base_url = Application.get_env(:api_checker, :base_url)
+      previous_api_key = Application.get_env(:api_checker, :api_key)
+
+      on_exit(fn ->
+        if previous_base_url,
+          do: Application.put_env(:api_checker, :base_url, previous_base_url),
+          else: Application.delete_env(:api_checker, :base_url)
+
+        if previous_api_key,
+          do: Application.put_env(:api_checker, :api_key, previous_api_key),
+          else: Application.delete_env(:api_checker, :api_key)
+      end)
+
+      Application.put_env(:api_checker, :base_url, "https://api-v3.mbta.com")
+      Application.put_env(:api_checker, :api_key, "secret-key")
+
+      json =
+        @valid_periodic_task_json
+        |> Map.drop(["url"])
+        |> Map.put("path", "/predictions?filter[route]=Red,Orange,Blue")
+
+      assert {:ok, task} = PeriodicTask.from_json(json)
+      uri = URI.parse(task.url)
+      assert "#{uri.scheme}://#{uri.host}#{uri.path}" == "https://api-v3.mbta.com/predictions"
+      assert URI.decode_query(uri.query) == %{"filter[route]" => "Red,Orange,Blue", "api_key" => "secret-key"}
+    end
+
+    test "appends api_key with a leading ? when the path has no query string" do
+      previous_base_url = Application.get_env(:api_checker, :base_url)
+      previous_api_key = Application.get_env(:api_checker, :api_key)
+
+      on_exit(fn ->
+        if previous_base_url,
+          do: Application.put_env(:api_checker, :base_url, previous_base_url),
+          else: Application.delete_env(:api_checker, :base_url)
+
+        if previous_api_key,
+          do: Application.put_env(:api_checker, :api_key, previous_api_key),
+          else: Application.delete_env(:api_checker, :api_key)
+      end)
+
+      Application.put_env(:api_checker, :base_url, "https://api-v3.mbta.com")
+      Application.put_env(:api_checker, :api_key, "secret-key")
+
+      json =
+        @valid_periodic_task_json
+        |> Map.drop(["url"])
+        |> Map.put("path", "/predictions")
+
+      assert {:ok, task} = PeriodicTask.from_json(json)
+      assert task.url == "https://api-v3.mbta.com/predictions?api_key=secret-key"
+    end
+
+    test "does not append api_key to an explicitly given url" do
+      previous_api_key = Application.get_env(:api_checker, :api_key)
+
+      on_exit(fn ->
+        if previous_api_key,
+          do: Application.put_env(:api_checker, :api_key, previous_api_key),
+          else: Application.delete_env(:api_checker, :api_key)
+      end)
+
+      Application.put_env(:api_checker, :api_key, "secret-key")
+
+      assert {:ok, task} = PeriodicTask.from_json(@valid_periodic_task_json)
+      assert task.url == "https://api-v3.mbta.com/predictions?filter%5Broute%5D=Red,Orange,Blue"
     end
   end
 
