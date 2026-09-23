@@ -1,7 +1,7 @@
 [
   {
-    "name": "subway-predictions",
-    "url": "https://api-v3.mbta.com/predictions?filter[route]=Red,Orange,Blue,Green-B,Green-C,Green-D,Green-E,Mattapan",
+    "name": "light-rail-predictions",
+    "url": "https://api-v3.mbta.com/predictions?filter[route]=Green-B,Green-C,Green-D,Green-E,Mattapan",
     "active": true,
     "frequency_in_seconds": 120,
     "time_ranges": [
@@ -59,8 +59,76 @@
           "data"
         ],
         "expects": {
-          "expectation": "min_length",
-          "min_length": 175
+          "expectation": "active_schedule_min_length",
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E", "Mattapan"],
+	  "multiplier": 0.05
+        }
+      }
+    ]
+  },
+  {
+    "name": "heavy-rail-predictions",
+    "url": "https://api-v3.mbta.com/predictions?filter[route]=Red,Orange,Blue",
+    "active": true,
+    "frequency_in_seconds": 120,
+    "time_ranges": [
+      {
+        "type": "weekly",
+        "day": "SUN",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "MON",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "TUE",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "WED",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "THU",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "FRI",
+        "start": "05:59",
+        "stop": "23:59"
+      },
+      {
+        "type": "weekly",
+        "day": "SAT",
+        "start": "05:59",
+        "stop": "23:59"
+      }
+    ],
+    "checks": [
+      {
+        "type": "stale",
+        "time_limit_in_seconds": 300
+      },
+      {
+        "type": "json",
+        "keypath": [
+          "data"
+        ],
+        "expects": {
+          "expectation": "active_schedule_min_length",
+          "routes": ["Red", "Orange", "Blue"],
+	  "multiplier": 0.05
         }
       }
     ]
@@ -130,7 +198,7 @@
   },
   {
     "name": "commuter-rail-predictions",
-    "url": "https://api-v3.mbta.com/predictions?filter[route]=CR-Fairmount,CR-Fitchburg,CR-Worcester,CR-Franklin,CR-Greenbush,CR-Haverhill,CR-Kingston,CR-Lowell,CR-Middleborough,CR-Needham,CR-Newburyport,CR-Providence,CR-Foxboro&filter[stop_sequence]=3,4,5",
+    "url": "https://api-v3.mbta.com/predictions?filter[route]=CR-Fairmount,CR-Fitchburg,CR-Worcester,CR-Franklin,CR-Greenbush,CR-Haverhill,CR-Kingston,CR-Lowell,CR-Middleborough,CR-Needham,CR-Newburyport,CR-Providence,CR-Foxboro&filter[stop_sequence]=30,40,50",
     "active": true,
     "frequency_in_seconds": 120,
     "time_ranges": [
