@@ -1,5 +1,5 @@
 defmodule ApiChecker.TaskRunnerTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
   alias ApiChecker.Check.JsonCheck
   alias ApiChecker.{PeriodicTask, PreviousResponse, TaskRunner}
   import ExUnit.CaptureLog
@@ -76,5 +76,61 @@ defmodule ApiChecker.TaskRunnerTest do
 
     assert captured =~ ~s(Check OK - task_name="mbta-testing-01")
     assert captured =~ ~s(Check Failure - task_name="failure-task")
+  end
+
+  describe "run_check/2 CloudEvent publishing" do
+    defmodule RecordingClient do
+      @moduledoc false
+      @behaviour ApiChecker.Events.KinesisClient
+
+      @impl true
+      def put_record(stream_name, partition_key, data) do
+        test_pid = Application.fetch_env!(:api_checker, :kinesis_test_pid)
+        send(test_pid, {:put_record, stream_name, partition_key, data})
+        :ok
+      end
+    end
+
+    setup do
+      original_client = Application.get_env(:api_checker, :kinesis_client)
+      original_stream_name = Application.get_env(:api_checker, :kinesis_stream_name)
+
+      Application.put_env(:api_checker, :kinesis_client, RecordingClient)
+      Application.put_env(:api_checker, :kinesis_stream_name, "my-stream")
+      Application.put_env(:api_checker, :kinesis_test_pid, self())
+
+      on_exit(fn ->
+        Application.put_env(:api_checker, :kinesis_client, original_client)
+        Application.put_env(:api_checker, :kinesis_stream_name, original_stream_name)
+        Application.delete_env(:api_checker, :kinesis_test_pid)
+      end)
+
+      :ok
+    end
+
+    test "publishes a successful check event for each check that runs" do
+      params = %ApiChecker.Check.Params{
+        decoded_body: %{"data" => ["ok"], "jsonapi" => %{"version" => "1.0"}},
+        name: "mbta-testing-01"
+      }
+
+      for check <- @valid_periodic_task.checks do
+        TaskRunner.run_check(check, params)
+      end
+
+      assert_receive {:put_record, "my-stream", "mbta-testing-01", data}
+      assert {:ok, %{"data" => %{"checkName" => "mbta-testing-01", "success" => true}}} = Jason.decode(data)
+      assert_receive {:put_record, "my-stream", "mbta-testing-01", _data}
+    end
+
+    test "publishes a failing check event when a check fails" do
+      params = %ApiChecker.Check.Params{decoded_body: %{}, name: "failure-task"}
+      check = %JsonCheck{keypath: ["unexpected"], expects: "not_empty"}
+
+      TaskRunner.run_check(check, params)
+
+      assert_receive {:put_record, "my-stream", "failure-task", data}
+      assert {:ok, %{"data" => %{"checkName" => "failure-task", "success" => false}}} = Jason.decode(data)
+    end
   end
 end

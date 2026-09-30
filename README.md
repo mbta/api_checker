@@ -187,6 +187,22 @@ is to handle checks for things like predictions where the number of expected pre
 is going to depend on the level of service that is currently active. Based on some initial
 empirical observation, a multiplier of around 0.05 seems appropriate for predictions.
 
+## CloudEvents on AWS Kinesis
+
+Every time a check runs, ApiChecker publishes a [CloudEvent](https://cloudevents.io/) describing the check's name and whether it succeeded to an AWS Kinesis stream, per the [`com.mbta.api-checker.check`](https://mbta.github.io/schemas/events/com.mbta.api-checker.check) schema. This lets other systems consume check results in near-real-time instead of having to scrape logs.
+
+Publishing is implemented with the [`ex_aws`](https://hexdocs.pm/ex_aws) and [`ex_aws_kinesis`](https://hexdocs.pm/ex_aws_kinesis) libraries.
+
+### Environment Variables
+
+- `KINESIS_STREAM_NAME` - the name of the Kinesis stream that check events are published to. If this variable is not set, publishing is skipped (a debug line is logged instead), so setting it is only required where you actually want events to be sent (e.g. in production).
+
+Standard AWS credential/configuration environment variables (e.g. `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`) are honored by `ex_aws` as usual; no api-checker-specific configuration is needed for those.
+
+### Running locally without connecting to AWS
+
+In the `dev` and `test` Mix environments, ApiChecker is configured (see `config/config.exs`) to use a no-op Kinesis client (`ApiChecker.Events.KinesisClient.Noop`) instead of the real AWS-backed client. This means you can run the app locally (`iex -S mix`, `mix test`, etc.) without AWS credentials or a real Kinesis stream; check events are simply logged at the `:debug` level rather than sent. The real client (`ApiChecker.Events.KinesisClient.ExAws`) is only used by default outside of `dev`/`test`, e.g. in the compiled release used in production.
+
 ## Initial checks
 
 - https://api-v3.mbta.com/predictions?filter[route]=Red,Orange,Blue Every day, 6am to midnight Eastern

@@ -25,10 +25,15 @@ defmodule ApiChecker.Application do
     Application.put_env(:api_checker, :api_key, System.get_env("API_KEY"))
   end
 
+  defp load_kinesis_stream_name_from_env do
+    Application.put_env(:api_checker, :kinesis_stream_name, System.get_env("KINESIS_STREAM_NAME"))
+  end
+
   def start(_type, _args) do
     load_env_vars_from_file()
     load_base_url_from_env()
     load_api_key_from_env()
+    load_kinesis_stream_name_from_env()
     # List all child processes to be supervised
     children = [
       # Starts a worker by calling: ApiChecker.Worker.start_link(arg)
