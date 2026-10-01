@@ -66,7 +66,8 @@ defmodule ApiChecker.Events.CheckEvent do
   defp event_id do
     <<u0::32, u1::16, _::4, u2::12, _::2, u3::62>> = :crypto.strong_rand_bytes(16)
 
-    Base.encode16(<<u0::32, u1::16, 4::4, u2::12, 2::2, u3::62>>, case: :lower)
+    <<u0::32, u1::16, 4::4, u2::12, 2::2, u3::62>>
+    |> Base.encode16(case: :lower)
     |> insert_dashes()
   end
 
