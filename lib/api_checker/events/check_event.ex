@@ -12,8 +12,10 @@ defmodule ApiChecker.Events.CheckEvent do
   @specversion "1.0"
   @type_name "com.mbta.api-checker.check.v1"
 
+  @type check_event_data :: %{checkName: String.t(), success: boolean}
+
   @type t :: %{
-          data: %{checkName: String.t(), success: boolean},
+          data: check_event_data(),
           id: String.t(),
           source: String.t(),
           specversion: String.t(),
