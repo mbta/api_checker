@@ -51,7 +51,7 @@ defmodule ApiChecker.Events.KinesisClient.Noop do
   @impl true
   def put_record(stream_name, partition_key, data) do
     Logger.debug(
-      "Kinesis Noop - stream_name=#{inspect(stream_name)} partition_key=#{inspect(partition_key)} data=#{inspect(data)}"
+      "event=kinesis_noop stream_name=#{inspect(stream_name)} partition_key=#{inspect(partition_key)} data=#{inspect(data)}"
     )
 
     :ok

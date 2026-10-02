@@ -13,7 +13,7 @@ defmodule ApiChecker.Events.KinesisClientTest do
 
       assert result == :ok
 
-      assert captured =~ "Kinesis Noop"
+      assert captured =~ "event=kinesis_noop"
       assert captured =~ ~s(stream_name="some-stream")
       assert captured =~ ~s(partition_key="partition-key")
     end
