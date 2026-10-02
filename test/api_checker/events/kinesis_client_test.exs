@@ -6,10 +6,12 @@ defmodule ApiChecker.Events.KinesisClientTest do
 
   describe "Noop.put_record/3" do
     test "doesn't raise and returns :ok without contacting AWS" do
-      captured =
-        capture_log([level: :debug], fn ->
-          assert Noop.put_record("some-stream", "partition-key", "{}") == :ok
+      {result, captured} =
+        with_log([level: :debug], fn ->
+          Noop.put_record("some-stream", "partition-key", "{}")
         end)
+
+      assert result == :ok
 
       assert captured =~ "Kinesis Noop"
       assert captured =~ ~s(stream_name="some-stream")
