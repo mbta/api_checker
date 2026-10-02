@@ -28,9 +28,7 @@ defmodule ApiChecker.Events.KinesisClient.ExAws do
         :ok
 
       {:error, reason} = err ->
-        Logger.error(fn ->
-          "Kinesis Error - reason=#{inspect(reason)} stream_name=#{inspect(stream_name)}"
-        end)
+        Logger.error("Kinesis Error - reason=#{inspect(reason)} stream_name=#{inspect(stream_name)}")
 
         err
     end
@@ -52,9 +50,9 @@ defmodule ApiChecker.Events.KinesisClient.Noop do
 
   @impl true
   def put_record(stream_name, partition_key, data) do
-    Logger.debug(fn ->
+    Logger.debug(
       "Kinesis Noop - stream_name=#{inspect(stream_name)} partition_key=#{inspect(partition_key)} data=#{inspect(data)}"
-    end)
+    )
 
     :ok
   end

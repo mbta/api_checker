@@ -34,9 +34,7 @@ defmodule ApiChecker.Events.Publisher do
         client().put_record(stream_name, check_name, data)
 
       _ ->
-        Logger.debug(fn ->
-          "Kinesis Publish Skipped - reason=:no_stream_name_configured check_name=#{inspect(check_name)}"
-        end)
+        Logger.debug("Kinesis Publish Skipped - reason=:no_stream_name_configured check_name=#{inspect(check_name)}")
 
         :ok
     end
