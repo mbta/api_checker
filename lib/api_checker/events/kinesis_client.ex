@@ -28,7 +28,7 @@ defmodule ApiChecker.Events.KinesisClient.ExAws do
         :ok
 
       {:error, reason} = err ->
-        Logger.error("Kinesis Error - reason=#{inspect(reason)} stream_name=#{inspect(stream_name)}")
+        Logger.error("event=kinesis_put_error reason=#{inspect(reason)} stream_name=#{inspect(stream_name)}")
 
         err
     end
