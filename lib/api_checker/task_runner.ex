@@ -5,6 +5,7 @@ defmodule ApiChecker.TaskRunner do
   """
   require Logger
   alias ApiChecker.{Check, Check.Params, PeriodicTask, PreviousResponse}
+  alias ApiChecker.Events.Publisher
 
   @allowed_status_codes [200, 201]
   @timeout 30_000
@@ -114,6 +115,7 @@ defmodule ApiChecker.TaskRunner do
   def run_check(check, %Params{} = params) do
     check_result = Check.run_check(check, params)
     _ = Logger.info(fn -> log_check_result(check_result, check, params) end)
+    _ = Publisher.publish(params.name, Publisher.success?(check_result))
     :ok
   end
 

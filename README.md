@@ -40,28 +40,7 @@ A perodic task is configured by placing a json `array` of valid periodic task JS
 
 #### In AWS (for production)
 
-In production api-checker runs in Amazon ECS and the configuration lives there. The configuration there is not nicely formatted, so if you want to change it it is generally best to copy the current configuration to a local file in your editor, make the change, and then copy the new version back to ECS.
-
-##### Getting the current configuration
-
-1. Go to the [`Tasks` tab for the `api-checker-prod` cluster in ECS](https://console.aws.amazon.com/ecs/home?region=us-east-1#/clusters/api-checker/services/api-checker-prod/tasks)
-1. Click on the `Task Definition` name, i.e. `api-checker-prod:#`
-1. Under `Container Definitions` expand the `api-checker` row
-1. Under `Environment Variables` you'll find the definition for `API_CHECKER_CONFIGURATION`
-
-##### Updating the configuration
-
-1. Follow the steps for getting the current configuration which get you to the `Task Definition` page for the current version of the task
-1. Click `Create new revision`
-1. Under `Container Definitions` click the `api-checker` container name
-1. Under the `Environment` section, enter your updated value for the `API_CHECKER_CONFIGURATION` key
-1. Click `Update`
-1. At the bottom of the `Create new revision of Task Definition` page click `Create`
-1. Go to the [`api-checker-prod` Service page](https://console.aws.amazon.com/ecs/home?region=us-east-1#/clusters/api-checker/services/api-checker-prod/details)
-1. Click `Update`
-1. Select the latest `Revision` you just created (you might have to scroll up in the options list)
-1. Click `Skip to review`
-1. Click `Update Service`
+In production api-checker runs in Amazon ECS and the configuration is provided to the application via an environment variable. The contents of this environment variable are managed and updated via [OpenTofu](https://opentofu.org/).
 
 ### Periodic Task JSON Object
 
@@ -186,6 +165,18 @@ the count of records returned by `multiplier` to get the desired minimum length.
 is to handle checks for things like predictions where the number of expected predictions
 is going to depend on the level of service that is currently active. Based on some initial
 empirical observation, a multiplier of around 0.05 seems appropriate for predictions.
+
+## CloudEvents on AWS Kinesis
+
+Every time a check runs, ApiChecker publishes a [CloudEvent](https://cloudevents.io/) describing the check's name and whether it succeeded to an AWS Kinesis stream, per the [`com.mbta.api-checker.check`](https://mbta.github.io/schemas/events/com.mbta.api-checker.check) schema. This is primarily for archiving historical uptime and reliability data.
+
+### Environment Variables
+
+- `KINESIS_STREAM_NAME` - the name of the Kinesis stream that check events are published to. If this variable is not set, publishing is skipped (a debug line is logged instead), so setting it is only required where you actually want events to be sent (e.g. in production).
+
+### Running locally without connecting to AWS
+
+In the `dev` and `test` Mix environments, ApiChecker is configured (see `config/config.exs`) to use a no-op Kinesis client (`ApiChecker.Events.KinesisClient.Noop`) instead of the real AWS-backed client. This means you can run the app locally (`iex -S mix`, `mix test`, etc.) without AWS credentials or a real Kinesis stream; check events are simply logged at the `:debug` level rather than sent. The real client (`ApiChecker.Events.KinesisClient.ExAws`) is only used by default outside of `dev`/`test`, e.g. in the compiled release used in production.
 
 ## Initial checks
 
