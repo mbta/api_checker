@@ -84,9 +84,9 @@ defmodule ApiChecker.TaskRunnerTest do
       @behaviour ApiChecker.Events.KinesisClient
 
       @impl true
-      def put_record(stream_name, partition_key, data) do
+      def publish_event(stream_name, partition_key, data) do
         test_pid = Application.fetch_env!(:api_checker, :kinesis_test_pid)
-        send(test_pid, {:put_record, stream_name, partition_key, data})
+        send(test_pid, {:publish_event, stream_name, partition_key, data})
         :ok
       end
     end
@@ -118,9 +118,9 @@ defmodule ApiChecker.TaskRunnerTest do
         TaskRunner.run_check(check, params)
       end
 
-      assert_receive {:put_record, "my-stream", "mbta-testing-01", data}
+      assert_receive {:publish_event, "my-stream", "mbta-testing-01", data}
       assert {:ok, %{"data" => %{"checkName" => "mbta-testing-01", "success" => true}}} = Jason.decode(data)
-      assert_receive {:put_record, "my-stream", "mbta-testing-01", _data}
+      assert_receive {:publish_event, "my-stream", "mbta-testing-01", _data}
     end
 
     test "publishes a failing check event when a check fails" do
@@ -129,7 +129,7 @@ defmodule ApiChecker.TaskRunnerTest do
 
       TaskRunner.run_check(check, params)
 
-      assert_receive {:put_record, "my-stream", "failure-task", data}
+      assert_receive {:publish_event, "my-stream", "failure-task", data}
       assert {:ok, %{"data" => %{"checkName" => "failure-task", "success" => false}}} = Jason.decode(data)
     end
   end

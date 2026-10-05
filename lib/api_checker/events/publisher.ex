@@ -31,7 +31,7 @@ defmodule ApiChecker.Events.Publisher do
       stream_name when is_binary(stream_name) and stream_name != "" ->
         event = CheckEvent.build(check_name, success)
         data = CheckEvent.encode(event)
-        client().put_record(stream_name, check_name, data)
+        client().publish_event(stream_name, check_name, data)
 
       _ ->
         Logger.debug(

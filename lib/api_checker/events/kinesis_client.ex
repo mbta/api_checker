@@ -6,7 +6,7 @@ defmodule ApiChecker.Events.KinesisClient do
   via the `:api_checker, :kinesis_client` application config.
   """
 
-  @callback put_record(stream_name :: String.t(), partition_key :: String.t(), data :: binary) ::
+  @callback publish_event(stream_name :: String.t(), partition_key :: String.t(), data :: binary) ::
               :ok | {:error, term}
 end
 
@@ -20,7 +20,7 @@ defmodule ApiChecker.Events.KinesisClient.ExAws do
   require Logger
 
   @impl true
-  def put_record(stream_name, partition_key, data) do
+  def publish_event(stream_name, partition_key, data) do
     case stream_name
          |> ExAws.Kinesis.put_record(partition_key, data)
          |> ExAws.request() do
@@ -49,7 +49,7 @@ defmodule ApiChecker.Events.KinesisClient.Noop do
   require Logger
 
   @impl true
-  def put_record(stream_name, partition_key, data) do
+  def publish_event(stream_name, partition_key, data) do
     Logger.debug(
       "event=kinesis_noop stream_name=#{inspect(stream_name)} partition_key=#{inspect(partition_key)} data=#{inspect(data)}"
     )

@@ -4,11 +4,11 @@ defmodule ApiChecker.Events.KinesisClientTest do
 
   alias ApiChecker.Events.KinesisClient.Noop
 
-  describe "Noop.put_record/3" do
+  describe "Noop.publish_event/3" do
     test "doesn't raise and returns :ok without contacting AWS" do
       {result, captured} =
         with_log([level: :debug], fn ->
-          Noop.put_record("some-stream", "partition-key", "{}")
+          Noop.publish_event("some-stream", "partition-key", "{}")
         end)
 
       assert result == :ok

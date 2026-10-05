@@ -9,9 +9,9 @@ defmodule ApiChecker.Events.PublisherTest do
     @behaviour ApiChecker.Events.KinesisClient
 
     @impl true
-    def put_record(stream_name, partition_key, data) do
+    def publish_event(stream_name, partition_key, data) do
       test_pid = Application.fetch_env!(:api_checker, :kinesis_test_pid)
-      send(test_pid, {:put_record, stream_name, partition_key, data})
+      send(test_pid, {:publish_event, stream_name, partition_key, data})
       :ok
     end
   end
@@ -37,7 +37,7 @@ defmodule ApiChecker.Events.PublisherTest do
 
       assert Publisher.publish("heavy-rail-predictions-weekdays", true) == :ok
 
-      assert_receive {:put_record, "my-stream", "heavy-rail-predictions-weekdays", data}
+      assert_receive {:publish_event, "my-stream", "heavy-rail-predictions-weekdays", data}
       assert {:ok, decoded} = Jason.decode(data)
       assert decoded["data"] == %{"checkName" => "heavy-rail-predictions-weekdays", "success" => true}
       assert decoded["type"] == "com.mbta.api-checker.check.v1"
@@ -49,7 +49,7 @@ defmodule ApiChecker.Events.PublisherTest do
       Application.put_env(:api_checker, :kinesis_test_pid, self())
 
       assert Publisher.publish("some-check", false) == :ok
-      refute_receive {:put_record, _, _, _}
+      refute_receive {:publish_event, _, _, _}
     end
 
     test "is a no-op when the stream name is an empty string" do
@@ -58,7 +58,7 @@ defmodule ApiChecker.Events.PublisherTest do
       Application.put_env(:api_checker, :kinesis_test_pid, self())
 
       assert Publisher.publish("some-check", false) == :ok
-      refute_receive {:put_record, _, _, _}
+      refute_receive {:publish_event, _, _, _}
     end
   end
 
