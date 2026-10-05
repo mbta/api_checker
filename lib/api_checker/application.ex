@@ -30,7 +30,10 @@ defmodule ApiChecker.Application do
   end
 
   defp load_kinesis_stream_source_from_env do
-    Application.put_env(:api_checker, :kinesis_stream_source, System.get_env("KINESIS_STREAM_SOURCE"))
+    case System.get_env("KINESIS_STREAM_SOURCE") do
+      nil -> :ok
+      source -> Application.put_env(:api_checker, :kinesis_stream_source, source)
+    end
   end
 
   def start(_type, _args) do
