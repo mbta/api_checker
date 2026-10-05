@@ -50,6 +50,7 @@ defmodule ApiChecker.Application do
       {ApiChecker.Holiday, name: ApiChecker.Holiday},
       {ApiChecker.ScheduleCountCache, nil},
       {ApiChecker.PreviousResponse, nil},
+      {ApiChecker.Events.PublisherServer, []},
       {ApiChecker.Scheduler, nil}
     ]
 
