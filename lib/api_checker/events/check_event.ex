@@ -8,7 +8,7 @@ defmodule ApiChecker.Events.CheckEvent do
   and its result.
   """
 
-  @source "api-checker"
+  @default_source "api-checker"
   @specversion "1.0"
   @type_name "com.mbta.api-checker.check.v1"
 
@@ -47,7 +47,7 @@ defmodule ApiChecker.Events.CheckEvent do
         success: success
       },
       id: event_id(),
-      source: @source,
+      source: source(),
       specversion: @specversion,
       time: DateTime.to_iso8601(now),
       type: @type_name
@@ -75,5 +75,9 @@ defmodule ApiChecker.Events.CheckEvent do
 
   defp insert_dashes(<<a::binary-size(8), b::binary-size(4), c::binary-size(4), d::binary-size(4), e::binary-size(12)>>) do
     "#{a}-#{b}-#{c}-#{d}-#{e}"
+  end
+
+  defp source do
+    Application.get_env(:api_checker, :kinesis_stream_source, @default_source)
   end
 end

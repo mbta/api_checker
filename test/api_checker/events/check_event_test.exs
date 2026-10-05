@@ -1,18 +1,28 @@
 defmodule ApiChecker.Events.CheckEventTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
   doctest ApiChecker.Events.CheckEvent
 
   alias ApiChecker.Events.CheckEvent
 
   describe "build/3" do
     test "builds a CloudEvent map matching the com.mbta.api-checker.check schema" do
+      previous_kinesis_source = Application.get_env(:api_checker, :kinesis_stream_source)
+
+      on_exit(fn ->
+        if previous_kinesis_source,
+          do: Application.put_env(:api_checker, :kinesis_stream_source, previous_kinesis_source),
+          else: Application.delete_env(:api_checker, :kinesis_stream_source)
+      end)
+
+      Application.put_env(:api_checker, :kinesis_stream_source, "api-checker-fake-source")
+
       now = ~U[2026-09-24 12:01:00.110000Z]
       event = CheckEvent.build("heavy-rail-predictions-weekdays", true, now)
 
       assert event == %{
                data: %{checkName: "heavy-rail-predictions-weekdays", success: true},
                id: event.id,
-               source: "api-checker",
+               source: "api-checker-fake-source",
                specversion: "1.0",
                time: "2026-09-24T12:01:00.110000Z",
                type: "com.mbta.api-checker.check.v1"
