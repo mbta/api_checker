@@ -15,6 +15,6 @@ case Mix.env() do
     # Avoid connecting to a real Kinesis stream in the test suite.
     config :api_checker, kinesis_client: ApiChecker.Events.KinesisClient.Noop
 
-  _ ->
+  :prod ->
     config :api_checker, kinesis_client: ApiChecker.Events.KinesisClient.ExAws
 end
