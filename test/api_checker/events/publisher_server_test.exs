@@ -42,8 +42,6 @@ defmodule ApiChecker.Events.PublisherServerTest do
   end
 
   test "does not block the caller while the Kinesis publish happens", %{server: server} do
-    # The cast returns immediately, before the (synchronous, in this test)
-    # publish to the recording client has necessarily completed.
     assert PublisherServer.publish("some-check", false, server) == :ok
     assert_receive {:publish_event, "my-stream", "some-check", _data}
   end
