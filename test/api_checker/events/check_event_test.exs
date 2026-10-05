@@ -9,9 +9,9 @@ defmodule ApiChecker.Events.CheckEventTest do
       previous_kinesis_source = Application.get_env(:api_checker, :kinesis_stream_source)
 
       on_exit(fn ->
-        if !is_nil(previous_kinesis_source),
-          do: Application.put_env(:api_checker, :kinesis_stream_source, previous_kinesis_source),
-          else: Application.delete_env(:api_checker, :kinesis_stream_source)
+        if is_nil(previous_kinesis_source),
+          do: Application.delete_env(:api_checker, :kinesis_stream_source),
+          else: Application.put_env(:api_checker, :kinesis_stream_source, previous_kinesis_source)
       end)
 
       Application.put_env(:api_checker, :kinesis_stream_source, "api-checker-fake-source")
