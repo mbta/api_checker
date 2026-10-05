@@ -1,5 +1,6 @@
 defmodule ApiChecker.Events.PublisherTest do
   use ExUnit.Case
+  import ExUnit.CaptureLog
   doctest ApiChecker.Events.Publisher
 
   alias ApiChecker.Events.Publisher
@@ -13,6 +14,16 @@ defmodule ApiChecker.Events.PublisherTest do
       test_pid = Application.fetch_env!(:api_checker, :kinesis_test_pid)
       send(test_pid, {:publish_event, stream_name, partition_key, data})
       :ok
+    end
+  end
+
+  defmodule FailingClient do
+    @moduledoc false
+    @behaviour ApiChecker.Events.KinesisClient
+
+    @impl true
+    def publish_event(_stream_name, _partition_key, _data) do
+      {:error, :some_error}
     end
   end
 
@@ -59,6 +70,22 @@ defmodule ApiChecker.Events.PublisherTest do
 
       assert Publisher.publish("some-check", false) == :ok
       refute_receive {:publish_event, _, _, _}
+    end
+
+    test "logs on publish failure" do
+      Application.put_env(:api_checker, :kinesis_client, FailingClient)
+      Application.put_env(:api_checker, :kinesis_stream_name, "my-stream")
+
+      {result, log} =
+        with_log([], fn ->
+          Publisher.publish("heavy-rail-predictions-weekdays", true)
+        end)
+
+      assert result == {:error, :some_error}
+
+      assert log =~ "event=kinesis_put_error"
+      assert log =~ "reason=:some_error"
+      assert log =~ "stream_name=\"my-stream\""
     end
   end
 

@@ -31,7 +31,16 @@ defmodule ApiChecker.Events.Publisher do
       stream_name when is_binary(stream_name) and stream_name != "" ->
         event = CheckEvent.build(check_name, success)
         data = CheckEvent.encode(event)
-        client().publish_event(stream_name, check_name, data)
+
+        case client().publish_event(stream_name, check_name, data) do
+          :ok ->
+            :ok
+
+          {:error, reason} = err ->
+            Logger.error("event=kinesis_put_error reason=#{inspect(reason)} stream_name=#{inspect(stream_name)}")
+
+            err
+        end
 
       _ ->
         Logger.debug(
