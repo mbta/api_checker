@@ -1,0 +1,21 @@
+defmodule ApiChecker.Events.KinesisClientTest do
+  use ExUnit.Case, async: true
+  import ExUnit.CaptureLog
+
+  alias ApiChecker.Events.KinesisClient.Noop
+
+  describe "Noop.publish_event/3" do
+    test "doesn't raise and returns :ok without contacting AWS" do
+      {result, captured} =
+        with_log([level: :debug], fn ->
+          Noop.publish_event("some-stream", "partition-key", "{}")
+        end)
+
+      assert result == :ok
+
+      assert captured =~ "event=kinesis_noop"
+      assert captured =~ ~s(stream_name="some-stream")
+      assert captured =~ ~s(partition_key="partition-key")
+    end
+  end
+end

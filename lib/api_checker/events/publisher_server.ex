@@ -1,0 +1,28 @@
+defmodule ApiChecker.Events.PublisherServer do
+  @moduledoc """
+  GenServer wrapper around `ApiChecker.Events.Publisher` that publishes
+  check result events to Kinesis asynchronously.
+  """
+  use GenServer
+  alias ApiChecker.Events.Publisher
+
+  def start_link(opts \\ []) do
+    name = Keyword.get(opts, :name, __MODULE__)
+    GenServer.start_link(__MODULE__, nil, name: name)
+  end
+
+  @spec publish(String.t(), boolean, GenServer.server()) :: :ok
+  def publish(check_name, success, server \\ __MODULE__)
+      when is_binary(check_name) and is_boolean(success) do
+    GenServer.cast(server, {:publish, check_name, success})
+  end
+
+  @impl true
+  def init(_), do: {:ok, nil}
+
+  @impl true
+  def handle_cast({:publish, check_name, success}, state) do
+    _ = Publisher.publish(check_name, success)
+    {:noreply, state}
+  end
+end
