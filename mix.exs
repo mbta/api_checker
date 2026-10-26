@@ -24,11 +24,11 @@ defmodule ApiChecker.Mixfile do
   defp deps do
     [
       {:jason, "~> 1.0"},
-      {:tzdata, "~> 1.1"},
-      {:httpoison, "~> 1.0"},
-      {:ex_aws, "~> 2.5"},
+      {:tzdata, "~> 1.2"},
+      {:httpoison, "~> 3.0"},
+      {:ex_aws, "~> 2.7"},
       {:ex_aws_kinesis, "~> 2.0"},
-      {:hackney, "~> 1.17"},
+      {:hackney, "~> 4.9"},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:bypass, "~> 2.0", only: [:test]},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
